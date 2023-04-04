@@ -1,0 +1,254 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+	<link type="text/css" rel="stylesheet" href="{% static 'css/stylesHome.css' %}" />
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title> Modificar Plantillas </title>
+
+</head>
+<body>
+
+	<header>
+		<nav class="navbar navbar-expand-lg navbar-light" style="background-color: rgba(0, 0, 0, 0.05);">
+
+		  	<div class="container-fluid">
+
+		  		<div class="col-4">
+		  			<a href="/" ><img height="90" width="220" src="{% static 'img/bmlogo-r.png' %}" class="rounded"></a>
+		  		</div>
+
+		  		<div class="col-4 text-center">
+		  			<h1 class="navbar-brand float-start" href="/home/" style="text-align: center; font-size: 30px;" > Modificar plantillas </h1>
+		  		</div>
+		  		
+		  		<div class="col-2 p-2">
+	  			    {% if user.is_authenticated %}
+	  			    	<div class="btn-group dropstart">
+						  <span class="dropdown-toggle text-reset fw-bold" data-bs-toggle="dropdown" aria-expanded="false">
+						    <i class="bi bi-gear-fill"></i> {{ user.get_username }}
+						  </span>
+						  <ul class="dropdown-menu">
+						    <li><a class="dropdown-item" href="/plantillas/modificar_plantillas/"> Modificar plantillas </a></li>
+						    <li><a class="dropdown-item" href="/admin/"> Administracion </a></li>
+						    <li><hr class="dropdown-divider"></li>
+						    <li><a class="dropdown-item" href="/admin/logout/"> Log Out</a></li>
+						  </ul>
+						</div>
+				   	{% endif %}
+		        </div>
+
+	    	</div>
+
+		</nav>
+	</header>
+
+	<div id="div_pri" class="container flex-column justify-content-center align-items-center mt-4">
+
+		<!-- Boton Agregar -->
+		<div>
+			<button type="button" class="btn btn-outline-success p-2" data-bs-toggle="modal" data-bs-target="#addFieldsModal">
+				<i class="bi bi-plus-circle"></i> Agregar 
+			</button>		
+		</div>
+
+		<!-- Tabla para visualizar data -->
+		<div>
+			<table class="table">
+			  <thead>
+			    <tr>
+			      <th scope="col">#</th>
+			      <th scope="col">Edificio</th>
+			      <th scope="col">Moneda</th>
+			      <th scope="col">inccat</th>
+			      <th scope="col">Descripcion</th>
+			      <th scope="col"></th>
+			    </tr>
+			  </thead>
+			  <tbody>
+			  	{% for d in data %}
+			    <tr>
+			      <th scope="row">{{d.id}}</th>
+			      <td>{{d.bldgid}}</td>
+			      <td>{{d.currcode}}</td>
+			      <td>{{d.inccat}}</td>
+			      <td>{{d.descrptn}}</td>
+			      <td>
+			      	<a href="javascript:editar({{d.id}})" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#updateFieldsModal"> <i class="bi bi-pencil-square"></i> </a>
+			      	{{" "}} 
+			      	<a href="javascript:funcion({{d.id}})" class="btn btn-danger btn-sm"> <i class="bi bi-trash"></i> </a>
+			      </td>
+			    </tr>
+			    {% endfor %}
+			  </tbody>
+			</table>
+		</div>
+
+		<!-- Modal crear campo nuevo -->
+		<div class="modal fade" id="addFieldsModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		  	<div class="modal-dialog">
+		    	<div class="modal-content">
+
+		    		<!-- modal header -->
+					<div class="modal-header">
+						<h3 class="modal-title" id="exampleModalLabel"> Agregar Campo Nuevo </h3>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+
+					<!-- modal body -->
+					<div class="modal-body">
+						<form id="formACN" action="/plantillas/modificar_plantillas/" method="post" enctype="multipart/form-data">
+							{% csrf_token %}
+							<div class="row">
+							  <div class="col-12">
+							    <label for="bldgid-select" class="col-form-label fw-bold">Edificio</label>
+							    <select id="bldgid-select" name="bldgid_select" class="form-select" aria-label="Default select example">
+								  <option class="text-reset" selected>Selecciona el edificio...</option>
+								  <option value="BM-SDC">BM-SDC</option>
+								  <option value="BM-PCC">BM-PCC</option>
+								  <option value="T-CAM">T-CAM</option>
+								</select>
+							  </div>
+							</div>
+
+							<div class="row">
+							  <div class="col-12">
+							    <label for="currcode-select" class="col-form-label fw-bold">Moneda</label>
+							    <select id="currcode-select" name="currcode_select" class="form-select" aria-label="Default select example">
+								  <option selected> Selecciona la moneda...</option>
+								  <option value="USD">USD</option>
+								  <option value="DOP">DOP</option>
+								</select>
+							  </div>
+							</div>
+
+							<div class="row">
+							  <div class="col-12">
+							    <label for="inccat-input" class="col-form-label fw-bold">Inccat</label>
+							    <input id="inccat-input" name="inccat_input" type="text" class="form-control" />
+							  </div>
+							</div>
+
+							<div class="row">
+							  <div class="col-12">
+							    <label for="descrptn-input" class="col-form-label fw-bold">Descripcion</label>
+							    <input id="descrptn-input" name="descrptn_input" type="text" class="form-control" />
+							  </div>
+							</div>
+
+							<div class="row">
+							  	<div class="col-12 p-2 mt-2">
+									<button for="formACN" type="submit" class="btn btn-primary" data-bs-dismiss="modal">
+										Guardar Cambios <i class="bi bi-arrow-right-circle-fill"></i>
+									</button>
+								</div>
+							</div>
+
+						</form>
+
+					</div>
+
+		    	</div>
+		  	</div>
+		</div>
+
+		<!-- Modal editar campo -->
+		<div class="modal fade" id="updateFieldsModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		  	<div class="modal-dialog">
+		    	<div class="modal-content">
+
+		    		<!-- modal header -->
+					<div class="modal-header">
+						<h3 class="modal-title" id="exampleModalLabel"> Editar Campo </h3>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+
+					<!-- modal body -->
+					<div class="modal-body">
+						<form id="formUCN" action="/plantillas/modificar_plantillas/" method="post" enctype="multipart/form-data">
+							{% csrf_token %}
+							<div class="row">
+							  <div class="col-12">
+							    <label for="bldgid-select" class="col-form-label fw-bold">Edificio</label>
+							    <select id="bldgid-select" name="bldgid_select" class="form-select" aria-label="Default select example">
+								  <option class="text-reset" selected>Selecciona el edificio...</option>
+								  <option value="BM-SDC">BM-SDC</option>
+								  <option value="BM-PCC">BM-PCC</option>
+								  <option value="T-CAM">T-CAM</option>
+								</select>
+							  </div>
+							</div>
+
+							<div class="row">
+							  <div class="col-12">
+							    <label for="currcode-select" class="col-form-label fw-bold">Moneda</label>
+							    <select id="currcode-select" name="currcode_select" class="form-select" aria-label="Default select example">
+								  <option selected> Selecciona la moneda...</option>
+								  <option value="USD">USD</option>
+								  <option value="DOP">DOP</option>
+								</select>
+							  </div>
+							</div>
+
+							<div class="row">
+							  <div class="col-12">
+							    <label for="inccat-input" class="col-form-label fw-bold">Inccat</label>
+							    <input id="inccat-input" name="inccat_input" type="text" class="form-control" />
+							  </div>
+							</div>
+
+							<div class="row">
+							  <div class="col-12">
+							    <label for="descrptn-input" class="col-form-label fw-bold">Descripcion</label>
+							    <input id="descrptn-input" name="descrptn_input" type="text" class="form-control" />
+							  </div>
+							</div>
+
+							<div class="row">
+							  	<div class="col-12 p-2 mt-2">
+									<button for="formACN" type="submit" class="btn btn-primary" data-bs-dismiss="modal">
+										Guardar Cambios <i class="bi bi-arrow-right-circle-fill"></i>
+									</button>
+								</div>
+							</div>
+
+						</form>
+
+					</div>
+
+		    	</div>
+		  	</div>
+		</div>
+		
+	</div>
+
+	<!-- Footer -->
+	<footer class="text-center text-lg-start bg-light text-muted">
+	  <div class="text-center p-2" style="background-color: rgba(0, 0, 0, 0.05);">
+	    © 2023,
+	    <a class="text-reset fw-bold"> Todos los derechos reservados</a>
+	  </div>
+	</footer>
+	<!-- Footer -->
+
+	<script>
+      	function funcion(id){
+	        var borrar = confirm('Desea eliminar esta descripcion?');
+	        if (borrar == true)
+	        {
+	        	location.href ="/plantillas/modificar_plantillas/eliminar/"+id;
+	        }
+      	}
+      	function editar(id){
+      		alert(id);
+
+      	}
+    </script>
+	
+</body>
+</html>
