@@ -115,9 +115,7 @@ def subir_archivo(request):
 				#for j in i[4]:
 					#print(j)
 
-			#print(columnas, data, filtro)
-			#p = Archivo(file.name, columnas, data, filtro)
-			#print(columnas)
+			
 			a.filename = file.name
 			a.cols = columnas
 			a.data = data
