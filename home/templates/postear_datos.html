@@ -32,10 +32,12 @@
 						    <i class="bi bi-gear-fill"></i> {{ user.get_username }}
 						  </span>
 						  <ul class="dropdown-menu">
-						    <li><a class="dropdown-item" href="/plantillas/modificar_plantillas/"> Modificar plantillas </a></li>
-						    <li><a class="dropdown-item" href="/admin/"> Administracion </a></li>
-						    <li><hr class="dropdown-divider"></li>
-						    <li><a class="dropdown-item" href="/admin/logout/"> Log Out</a></li>
+						  	{% if user.is_superuser %}
+						    	<li><a class="dropdown-item" href="/plantillas/modificar_plantillas/"> Modificar plantillas </a></li>
+						    	<li><a class="dropdown-item" href="/admin/"> Administracion </a></li>
+						    	<li><hr class="dropdown-divider"></li>
+						    {% endif %}
+						    <li><a class="dropdown-item" href="/admin/logout/"> Salir </a></li>
 						  </ul>
 						</div>
 				   	{% endif %}
@@ -56,28 +58,21 @@
 					<table class="table mb-0 rounded">
 						<thead class="thead-info">
 							<tr>
-								<th> # </th>
-								{% for d in data %}
-									<th> {{d.building}}</th>
-								{% endfor %}
+								<th> {{""}}</th>
+								<th> Validacion #1 </th>
+								<th> Validacion #2 </th>
 							</tr>
 						</thead>
 						<tbody>
 							{% for d in data %}
 								<tr>
-							
-									<td> {{d.id}} </td>
+									<td> {{d.building}} </td>
 									{% if d.real == True %}
 										<td> <i class="bi bi-check-circle-fill text-success"></i> </td>
 									{% else %}
 										<td> <i class="bi bi-x-circle-fill text-danger"></i> </td>
 									{% endif %}
-									{% if d.real == True %}
-										<td> <i class="bi bi-check-circle-fill text-success"></i> </td>
-									{% else %}
-										<td> <i class="bi bi-x-circle-fill text-danger"></i> </td>
-									{% endif %}
-									{% if d.real == True %}
+									{% if d.real2 == True %}
 										<td> <i class="bi bi-check-circle-fill text-success"></i> </td>
 									{% else %}
 										<td> <i class="bi bi-x-circle-fill text-danger"></i> </td>

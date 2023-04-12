@@ -18,6 +18,7 @@ class LogDatosP(models.Model):
 	username = models.CharField(max_length=30)
 	building = models.CharField(max_length=10)
 	real = models.BooleanField(default=False)
+	real2 = models.BooleanField(default=False)
 	created = models.DateTimeField()
 
 	def __str__(self):
@@ -25,6 +26,13 @@ class LogDatosP(models.Model):
 		return template.format(self)
 
 
+class LogSubirDatosP(models.Model):
+	username = models.CharField(max_length=30)
+	building = models.CharField(max_length=10)
+	active = models.BooleanField(default=True)
+
+	def __str__(self):
+		template = '{0.username} {0.building} {0.active}'
 """
 class DatosTcam(models.Model):
 	leasid = models.CharField(max_length=10)

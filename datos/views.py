@@ -2,10 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect
 from django.utils import timezone
 
-from .models import Datosp, LogDatosP
-
-def index():
-	print("Estas en datos")
+from .models import Datosp, LogDatosP, LogSubirDatosP
 
 
 def visualizar_data(request, filename, workbook):
@@ -34,7 +31,6 @@ def visualizar_data(request, filename, workbook):
 	agregar_LogDatosp(request.user.username, building)
 
 	return 0
-
 
 def visualizar_data2(filename, workbook):
 
@@ -75,21 +71,37 @@ def agregar_Datosp(d1, d2, d3, d4, d5):
 	d = Datosp(leasid=d1, bldgid=d2, suitid=d3, occpname=d4, values=d5)
 	d.save()
 
-def agregar_LogDatosp(d1, d2, d3):
+def agregar_LogDatosp(d1, d2, d3, d4):
 
 	if LogDatosP.objects.filter(building=d2).exists():
 		d = LogDatosP.objects.get(building=d2)
 		d.username = d1
 		d.building = d2
 		d.real = d3
+		d.real2 = d4
 		d.created = timezone.now()
 		d.save()
 	else:
-		d = LogDatosP(username=d1, building=d2, real=d3, created=timezone.now())
+		d = LogDatosP(username=d1, building=d2, real=d3, real2=d4, created=timezone.now())
 		d.save()
 
 	print("log de datos cargados, se ha ejecutado correctamente")
 
+def confirmar_LogDatosp(d1, d2):
+	d = LogDatosP.objects.get(id=d1)
+	d.real2 = d2
+	d.created = timezone.now()
+	d.save()
+
+	print("segunda confirmacion correcta")
+
+def agregar_LogSubirDatosP(d1, d2):
+
+	d = LogSubirDatosP(username=d1, building=d2)
+	d.save()
+
+def borrar_LogSubirDatosP(d1):
+	d = LogSubirDatosP.objects.filter(username=d1).delete()
 
 """
 def agregar_DatosTcam(d1, d2, d3, d4, d5):

@@ -15,8 +15,8 @@ from openpyxl import load_workbook
 
 from plantillas.models import Plantilla
 from plantillas.views import cargar_datos
-from datos.views import visualizar_data, agregar_Datosp, agregar_LogDatosp
-from datos.models import Datosp, LogDatosP
+from datos.views import visualizar_data, agregar_Datosp, agregar_LogDatosp, confirmar_LogDatosp, agregar_LogSubirDatosP, borrar_LogSubirDatosP
+from datos.models import Datosp, LogDatosP, LogSubirDatosP
 
 #columnas2 = [] 
 #filtro = []
@@ -27,9 +27,13 @@ def su_test(user):
 @login_required(login_url='/admin/')
 def home(request):
 
-	if request.user.is_authenticated:
-		print("User is logged in :)")
-		print(f"Username --> {request.user.username}")
+	if LogSubirDatosP.objects.filter(username=request.user.username).exists():
+		d = LogSubirDatosP.objects.get(username=request.user.username)
+		if request.user.is_authenticated:
+			if d.active == True:
+				return HttpResponseRedirect("/subir_archivo/confirmar/"+d.building)
+				#print("User is logged in :)")
+				#print(f"Username --> {request.user.username}")
 	else:
 		print("User is not logged in :(")
 
@@ -76,7 +80,6 @@ def subir_archivo(request):
 			workbook = load_workbook(file)
 			sheet = workbook.active
 		
-
 			columnas = []
 			for col in sheet.iter_cols(min_col=2):
 				columnas.append(col[0].value)
@@ -105,25 +108,18 @@ def subir_archivo(request):
 				for c in range(4,len(columnas)):
 					data2.append(row[c+1].value)
 
-					
 				data.append([row[1].value, row[2].value, row[3].value, row[4].value, data2])
+				filtro = str(row[2].value)
 
-				filtro = row[2].value
-
-			totales = []
-			#for i in data:
-				#for j in i[4]:
-					#print(j)
-
-			#print(columnas, data, filtro)
-			#p = Archivo(file.name, columnas, data, filtro)
-			#print(columnas)
+			
 			a.filename = file.name
 			a.cols = columnas
 			a.data = data
 			a.filtro = filtro
-			a.totales = totales
-			
+			a.totales = []
+
+
+			agregar_LogSubirDatosP(request.user.username, filtro)
 
 			return HttpResponseRedirect('/subir_archivo/confirmar/'+ file.name)
 
@@ -131,7 +127,6 @@ def subir_archivo(request):
 		print("No has hecho ningun POST")
 
 	return render(request, 'C:/Users/Leonor Fischer/Documents/re-sys-main/home/templates/subir_archivo.html')
-
 
 
 
@@ -168,16 +163,20 @@ def subir_archivo(request):
 
 
 
-
 @login_required(login_url='/admin/')
 def subir_archivo_confirmar(request, filename):
 
-	#d = Datosp.objects.filter(bldgid__contains=filtro[0])
-	d = []
 	print(a.filename)
 
 	#return render(request, 'C:/Users/Leonor Fischer/Documents/re-sys-main/home/templates/subir_archivo_confirmar.html', context={'columnas': columnas2, 'data': d, 'name': filename})
 	return render(request, 'C:/Users/Leonor Fischer/Documents/re-sys-main/home/templates/subir_archivo_confirmar.html', context={'columnas': a.cols, 'data': a.data, 'name': a.filename})
+
+@login_required(login_url='/admin/')
+def subir_archivo_confirmar2(request, building):
+
+	#return render(request, 'C:/Users/Leonor Fischer/Documents/re-sys-main/home/templates/subir_archivo_confirmar.html', context={'columnas': columnas2, 'data': d, 'name': filename})
+	return render(request, 'C:/Users/Leonor Fischer/Documents/re-sys-main/home/templates/subir_archivo_confirmar.html', context={'columnas': a.cols, 'data': a.data, 'name': a.filename})
+
 
 @login_required(login_url='/admin/')
 def subir_archivo_confirmar_cc(request):
@@ -199,7 +198,8 @@ def subir_archivo_confirmar_cc(request):
 		agregar_Datosp(row[0], row[1], row[2], row[3], data)
 		print("Se han agregado los datos nuevos a ", row[1])
 
-	agregar_LogDatosp(request.user.username, a.filtro, False)
+	agregar_LogDatosp(request.user.username, a.filtro, True, False)
+	borrar_LogSubirDatosP(request.user.username)
 
 	"""data = LogDatosP.objects.get(building__contains=filtro[0])
 	data.real = True
@@ -217,9 +217,10 @@ def subir_archivo_confirmar_dc(request):
 	a.filtro = ""
 	a.totales = []
 
+	borrar_LogSubirDatosP(request.user.username)
+
 	print("imprimiendo objeto de nombre: a \n", a)
 	return HttpResponseRedirect("/")
-
 
 
 
@@ -236,10 +237,20 @@ def validar_datos(request):
 
 	#print(filtros)
 
-
 	return render(request, 'C:/Users/Leonor Fischer/Documents/re-sys-main/home/templates/validar_datos.html', context={'data': data, 'filtros': filtros})
 
 
+@login_required(login_url='/admin/')
+@user_passes_test(su_test)
+def validar_datos_confirmar(request, id):
+
+	d = LogDatosP.objects.get(id=id)
+	if d.real2 == True:
+		confirmar_LogDatosp(id, False)
+	else:
+		confirmar_LogDatosp(id, True)
+
+	return HttpResponseRedirect("/validar_datos/")
 
 
 
@@ -247,17 +258,11 @@ def validar_datos(request):
 @user_passes_test(su_test)
 def postear_datos(request):
 	
-	data = LogDatosP.objects.all()
-
-	plt = []
-	p = Plantilla.objects.all()
-	for i in p:
-		if i not in plt:
-			print(i)
-			plt.append(i)
-	print(plt)
+	data = LogDatosP.objects.all().order_by('created').values()
+	
 
 	return render(request, 'C:/Users/Leonor Fischer/Documents/re-sys-main/home/templates/postear_datos.html', context={'data': data})
+
 
 
 class Archivo:
@@ -272,18 +277,3 @@ class Archivo:
 		self.data.append(dato)
 
 a = Archivo("", [], [], "", [])
-
-
-"""
-{% for i in data %}
-					<tr>	
-						<td> {{i.leasid}} </td>
-						<td> {{i.bldgid}} </td>
-						<td> {{i.suitid}} </td>
-						<td> {{i.occpname}} </td>
-						{% for k,v in i.values.items %}
-							<td> {{"g"}} </td>
-						{% endfor %}
-					</tr>
-				{% endfor %}
-"""

@@ -34,10 +34,12 @@
 						    <i class="bi bi-gear-fill"></i> {{ user.get_username }}
 						  </span>
 						  <ul class="dropdown-menu">
-						    <li><a class="dropdown-item" href="/plantillas/modificar_plantillas/"> Modificar plantillas </a></li>
-						    <li><a class="dropdown-item" href="/admin/"> Administracion </a></li>
-						    <li><hr class="dropdown-divider"></li>
-						    <li><a class="dropdown-item" href="/admin/logout/"> Log Out</a></li>
+						  	{% if user.is_superuser %}
+						    	<li><a class="dropdown-item" href="/plantillas/modificar_plantillas/"> Modificar plantillas </a></li>
+						    	<li><a class="dropdown-item" href="/admin/"> Administracion </a></li>
+						    	<li><hr class="dropdown-divider"></li>
+						    {% endif %}
+						    <li><a class="dropdown-item" href="/admin/logout/"> Salir </a></li>
 						  </ul>
 						</div>
 				   	{% endif %}
