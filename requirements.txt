@@ -1,6 +1,7 @@
 asgiref==3.6.0
 distlib==0.3.6
 Django==3.2.18
+django-url-params==1.0.2
 et-xmlfile==1.1.0
 filelock==3.9.0
 importlib-metadata==6.0.0
