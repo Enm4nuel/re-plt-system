@@ -32,10 +32,12 @@
 						    <i class="bi bi-gear-fill"></i> {{ user.get_username }}
 						  </span>
 						  <ul class="dropdown-menu">
-						    <li><a class="dropdown-item" href="/plantillas/modificar_plantillas/"> Modificar plantillas </a></li>
-						    <li><a class="dropdown-item" href="/admin/"> Administracion </a></li>
-						    <li><hr class="dropdown-divider"></li>
-						    <li><a class="dropdown-item" href="/admin/logout/"> Log Out</a></li>
+						  	{% if user.is_superuser %}
+						    	<li><a class="dropdown-item" href="/plantillas/modificar_plantillas/"> Modificar plantillas </a></li>
+						    	<li><a class="dropdown-item" href="/admin/"> Administracion </a></li>
+						    	<li><hr class="dropdown-divider"></li>
+						    {% endif %}
+						    <li><a class="dropdown-item" href="/admin/logout/"> Salir </a></li>
 						  </ul>
 						</div>
 				   	{% endif %}
@@ -45,44 +47,108 @@
 		</nav>
 	</header>
 
-	
+	<div class="accordion m-2" id="accordionExample">
+		{% for filtro in filtros %}
+
+			<div class="accordion-item">
+
+				<h2 class="accordion-header" id="heading{{filtro.building}}">
+					<button 
+						class="accordion-button" 
+						type="button" 
+						data-bs-toggle="collapse" 
+						data-bs-target="#collapse{{filtro.building}}" 
+						aria-expanded="false" 
+						aria-controls="collapse{{filtro.building}}"
+					>
+					{{filtro.building}}
+					</button>
+				</h2>
+
+				<div 
+					id="collapse{{filtro.building}}" 
+					class="accordion-collapse collapse show" 
+					aria-labelledby="heading{{filtro.building}}" 
+					data-bs-parent="#accordionExample"
+				>
+					<div class="accordion-body">
+						{% if filtro.real2 == False %}
+							<a class="btn btn-success col-2 m-1" href="javascript:confirmar({{filtro.id}})"> 
+								<i class="bi bi-check2-circle"></i> 
+								Validar 
+							</a>
+						{% else %}
+							<a class="btn btn-danger col-2 m-1" href="javascript:confirmar({{filtro.id}})"> 
+								<i class="bi bi-x-circle"></i> 
+								Cancelar validacion 
+							</a>
+						{% endif %}
+						<div class="table-responsive">
+						    <table class="table table-striped caption-top">
+								<tbody>
+									{% for i in data %}
+										{% if filtro.building == i.bldgid %}
+											<tr>	
+												<td> {{i.leasid}} </td>
+												<td> {{i.bldgid}} </td>
+												<td> {{i.suitid}} </td>
+												<td> {{i.occpname}} </td>
+												{% for k,v in i.values.items %}
+													<td> {{v}} </td>
+												{% endfor %}
+											</tr>
+										{% endif %}
+									{% endfor %}
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+
+			</div>
+
+		{% endfor %}
+	</div>
+
+
+	<!--
 	{% for filtro in filtros %}
+
+		<div class="col m-2">
+			<div class="row m-2">
+				<p class="fw-bold col-2"> {{filtro.building}} </p> 
+				<a class="btn btn-success col-2" href="javascript:confirmar({{filtro.id}})"> Validar </a>
+			</div>
+		</div>
 		
-		<div id="Layer1" class="m-2 p-2" style="width:1000px; height:500px; overflow: scroll;">Aquí saldrá un scroll<br>
+		<div class="m-2 p-1" style="margin-left: 25px; width:1000px; height:350px; overflow: auto;"> 
 			
 			<div class="table-responsive">
-			    <table class="table table-centered table-nowrap mb-0 rounded">
-			        <thead class="thead-light">
-			            <tr>
-			                <th class="border-0">Country</th>
-			                <th class="border-0">All</th>
-			                <th class="border-0">All Change</th>
-			            </tr>
-			        </thead>
-			        <tbody>
-			            <!-- Item -->
-			            <tr>
-			                <td class="border-0">
-			                    <a href="#" class="d-flex align-items-center">
-			                        <img class="me-2 image image-small rounded-circle" alt="Image placeholder" src="../../assets/img/flags/united-states-of-america.svg">
-			                        <div><span class="h6">United States</span></div>
-			                    </a>
-			                </td>
-			                <td class="border-0 font-weight-bold">106</td>
-			                <td class="border-0 text-danger">
-			                    <span class="fas fa-angle-down"></span>
-			                    <span class="font-weight-bold">5</span>
-			                </td>
-			            </tr>
-			            <!-- End of Item -->
-			            
-			        </tbody>
-			    </table>
+			    <table class="table table-striped caption-top">
+					
+					<tbody>
+						{% for i in data %}
+							{% if filtro.building == i.bldgid %}
+								<tr>	
+									<td> {{i.leasid}} </td>
+									<td> {{i.bldgid}} </td>
+									<td> {{i.suitid}} </td>
+									<td> {{i.occpname}} </td>
+									{% for k,v in i.values.items %}
+										<td> {{v}} </td>
+									{% endfor %}
+								</tr>
+							{% endif %}
+						{% endfor %}
+					</tbody>
+
+				</table>
 			</div>
 
 		</div>
 
 	{% endfor %}
+-->
 	
 
 	<!-- Footer -->
@@ -95,6 +161,17 @@
 		</footer>
 	</div>
 	<!-- Footer -->
+
+	<script>
+		function confirmar(b)
+		{
+			var confirmar = confirm('Estas a punto de confirmar los cambios realizados?');
+	        if (confirmar == true)
+	        {
+	        	location.href ="/validar_datos/confirmar/"+b;
+	        }
+		}
+	</script>
 	
 </body>
 </html>

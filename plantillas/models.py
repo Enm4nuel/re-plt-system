@@ -10,3 +10,11 @@ class Plantilla(models.Model):
 
 	def __str__(self):
 		return self.bldgid
+
+
+class Plantilla_cfg(models.Model):
+	rate = models.DecimalField(max_digits=5, decimal_places=2)
+	
+
+	def __str__(self):
+		return self.rate

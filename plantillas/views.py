@@ -4,7 +4,8 @@ import pathlib
 import pandas as pd
 import numpy as np
 
-import openpyxl
+from openpyxl import Workbook
+from openpyxl.styles import Font, Color
 
 from .models import Plantilla
 
@@ -34,7 +35,9 @@ def cargar_datos(edificio, moneda):
 
 	for i in range(len(row)):
 		leasid.append(row[i][0])
-		bldgid.append(row[i][1])
+		if "T-CAM" in row[i][1]:
+			b = row[i][1].split(" ")
+			bldgid.append(b[0])
 		suitid.append(row[i][2])
 		occpname.append(row[i][3])
 
@@ -148,6 +151,44 @@ def generar_plantilla(moneda, edificio, index = [], leasid = [], bldgid = [], su
 		d[str(index[i])] = ""
 	df = pd.DataFrame(data=d)
 	df.to_excel("Plantilla" + edificio + "_" + moneda + ".xlsx")
+
+
+def generar_plantilla2(moneda, edificio, index = [], leasid = [], bldgid = [], suitid = [], occpname = []):
+
+	wb = Workbook()
+	ws = wb.active
+
+	ws['A2'] = "Tasa"
+	ws['B2'] = 57.99
+	ws['A3'] = ""
+
+	let = ['A', 'B', 'C', 'D', 'E', 'F', 'G']
+
+	headers = ['LEASID', 'BLDGID', 'SUITID', 'OCCPNAME']
+
+	for i in range(len(index)):
+		headers.append(index[i])
+	
+	ws.append(headers)
+
+	for i in range(len(leasid)):
+		ws.append([leasid[i], bldgid[i], suitid[i], occpname[i]])
+		
+
+	# ESTILOS
+	TITULO = Font(bold=True)
+
+	row4 = ws.row_dimensions[4]
+	row4.font = TITULO
+
+	row1 = ws.row_dimensions[4]
+	row1.font = Font()
+
+
+	#ws['1'].font = Font(bold=True)
+
+	wb.save("Plantilla" + edificio + "_" + moneda + ".xlsx")
+
 
 
 def modificar_plantillas(request):
