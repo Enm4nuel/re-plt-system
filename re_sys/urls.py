@@ -22,4 +22,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('plantillas/', include('plantillas.urls')),
     path('datos/', include('datos.urls')),
+    path('to-mri/', include('to_mri.urls')),
 ]
