@@ -38,6 +38,8 @@ def cargar_datos(edificio, moneda):
 		if "T-CAM" in row[i][1]:
 			b = row[i][1].split(" ")
 			bldgid.append(b[0])
+		else:
+			bldgid.append(row[i][1])
 		suitid.append(row[i][2])
 		occpname.append(row[i][3])
 

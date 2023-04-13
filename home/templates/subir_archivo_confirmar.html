@@ -47,6 +47,18 @@
 		</nav>
 	</header>
 
+	{% for message in messages %}
+		<div class="alert alert-{{message.tags}} alert-dismissible m-2" id="msg" role="alert">
+			{% if message.tags == 'warning' %}
+				<i class="bi bi-exclamation-triangle-fill" style="font-size: 1.5em;"></i>
+			{% elif message.tags == 'success' %}
+				<i class="bi bi-check-circle-fill" style="font-size: 1.5em;"></i>
+			{% endif %}
+			{{message}}
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+		</div>
+	{% endfor %}
+
 	<div class="p-2 mt-2 ml-2">
 		<row>
 			<a id="botonActualizar" href="javascript:confirmar_cambios()" data-bs-toggle="tooltip" data-bs-placement="top" title="Guardar cambios" type="button" class="btn btn-success col-2" value="Guardar Cambios"> 
