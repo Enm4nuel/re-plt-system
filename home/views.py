@@ -16,8 +16,9 @@ import asyncio
 
 from openpyxl import load_workbook
 
-from plantillas.models import Plantilla
-from plantillas.views import cargar_datos
+from plantillas.models import *
+from plantillas.views import *
+
 from datos.views import visualizar_data, agregar_Datosp, agregar_LogDatosp, confirmar_LogDatosp, agregar_LogSubirDatosP, borrar_LogSubirDatosP
 from datos.models import Datosp, LogDatosP, LogSubirDatosP
 
@@ -49,23 +50,23 @@ def descargar_csv(request):
 	if request.method == 'POST':
 		
 		if 'edificio' in request.POST:
-			edificio = request.POST.get('edificio')
-			moneda = request.POST.get('moneda')
+			building = request.POST.get('edificio')
+			coin = request.POST.get('moneda')
 
-			cargar_datos(edificio, moneda)
+			loadData(building, coin)
 
 			messages.success(request, "Se ha descargado la plantilla con exito!")
 
 			return HttpResponseRedirect('/')
 		
 	else:
-		print("No has hecho ningun POST")
+		return 0
 
 	edificios = []
 	monedas = []
 
-	e = Plantilla.objects.all()
-	for i in e:
+	t = Template.objects.all()
+	for i in t:
 		if i.bldgid not in edificios:
 			edificios.append(i.bldgid)
 		if i.currcode not in monedas:

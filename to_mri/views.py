@@ -18,9 +18,10 @@ def formatear_data(request):
 	# Visualizar datos por edificio
 	for d in data:
 		for k,v in d.values.items():
-			print("------------------------------------------")
-			print(d.leasid, "- Llave: ", k, "|", "Valor: ", v)
-			print("------------------------------------------")
+			if v is not None and v != 0 and v != "" and v != "0" and v != "0.0" and v != "0.00":
+				print("------------------------------------------")
+				print(d.leasid, "- Llave: ", k, "|", "Valor: ", v)
+				print("------------------------------------------")
 
 	print(buildings)
 

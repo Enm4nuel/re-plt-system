@@ -1,12 +1,26 @@
 from django.contrib import admin
-from .models import Plantilla
+from .models import Template, TemplateLog, TemplateMonthlyCfg, TemplateMonthlyCfgLog
 
-@admin.register(Plantilla)
-class PlantillaAdmin(admin.ModelAdmin):
-	list_display = ('id', 'bldgid', 'currcode', 'inccat', 'descrptn')
+@admin.register(Template)
+class TemplateAdmin(admin.ModelAdmin):
+	list_display = ('id', 'bldgid', 'currcode', 'fields')
 	ordering = ('bldgid',)
-	search_fields = ('inccat', 'descrptn', 'currcode', 'bldgid')
-	list_filter = ('inccat',)
+	search_fields = ('bldgid',)
 
-# Register your models here.
-#admin.site.register(Plantilla)
+@admin.register(TemplateLog)
+class TemplateLogAdmin(admin.ModelAdmin):
+	list_display = ('bldgid', 'batch', 'invoice_date', 'created')
+	ordering = ('invoice_date',)
+	search_fields = ('batch', 'bldgid',)
+	readonly_fields = ('bldgid', 'batch', 'invoice_date', 'created')
+
+@admin.register(TemplateMonthlyCfg)
+class TemplateMonthlyCfgAdmin(admin.ModelAdmin):
+	list_display = ('id', 'rate', 'date')
+	ordering = ('id',)
+
+@admin.register(TemplateMonthlyCfgLog)
+class TemplateMonthlyCfgLogAdmin(admin.ModelAdmin):
+	list_display = ('id', 'rate', 'created')
+	ordering = ('created',)
+	readonly_fields = ('id', 'rate', 'created')
