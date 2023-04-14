@@ -5,11 +5,14 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.utils.datastructures import MultiValueDictKeyError
 from django.http import HttpResponseRedirect
+from django.contrib import messages
 
 import os
 import pathlib
 import pandas as pd
 import numpy as np
+
+import asyncio
 
 from openpyxl import load_workbook
 
@@ -31,13 +34,14 @@ def home(request):
 		d = LogSubirDatosP.objects.get(username=request.user.username)
 		if request.user.is_authenticated:
 			if d.active == True:
+				messages.warning(request, "Tienes una plantilla precargada con informacion sin validar!")
 				return HttpResponseRedirect("/subir_archivo/confirmar/"+d.building)
 				#print("User is logged in :)")
 				#print(f"Username --> {request.user.username}")
 	else:
 		print("User is not logged in :(")
 
-	return render(request, 'C:/Users/Leonor Fischer/Documents/re-sys-main/home/templates/home.html')
+	return render(request, 'C:/Users/Leonor Fischer/Documents/re-sys-main/home/templates/home.html', context={"message": messages})
 
 @login_required(login_url='/admin/')
 def descargar_csv(request):
@@ -49,6 +53,8 @@ def descargar_csv(request):
 			moneda = request.POST.get('moneda')
 
 			cargar_datos(edificio, moneda)
+
+			messages.success(request, "Se ha descargado la plantilla con exito!")
 
 			return HttpResponseRedirect('/')
 		
