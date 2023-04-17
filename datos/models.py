@@ -1,69 +1,95 @@
 from django.db import models
+from django.utils import timezone
+from datetime import date
+from django.contrib.auth.models import User
+
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 # Create your models here.
 
-class Datosp(models.Model):
+class TemplateData(models.Model):
 	leasid = models.CharField(max_length=10)
 	bldgid = models.CharField(max_length=10)
 	suitid = models.CharField(max_length=10)
 	occpname = models.CharField(max_length=50)
-	values = models.JSONField(null=True)
+	fields = models.JSONField(null=True)
+
+	def getbuildingsList(self):
+		data = TemplateData.objects.all()
+		bldgidList = []
+		for d in data:
+			if d.bldgid:
+				bldgidList.append(d.bldgid)
+		return bldgidList
+
+	def getLeasIdList(self):
+		data = TemplateData.objects.all()
+		leasidList = []
+		for d in data:
+			if d.leasid:
+				leasidList.append(d.leasid)
+		return leasidList
+
+	def getDataByLeasId(self, leasid):
+		data = TemplateData.objects.all().filter(leasid__contains=leasid)
+		return data
+
+	def getDataByBuildings(self, building):
+		data = TemplateData.objects.all().filter(bldgid__contains=building)
+		return data
 
 	def __str__(self):
-		template = '{0.leasid} {0.bldgid} {0.suitid} {0.occpname} {0.values}'
+		template = '{0.leasid} {0.bldgid} {0.suitid} {0.occpname} {0.fields}'
 		return template.format(self)
 
-# esta clase se usa en el template "postear datos".
-class LogDatosP(models.Model):
-	username = models.CharField(max_length=30)
-	building = models.CharField(max_length=10)
-	real = models.BooleanField(default=False)
-	real2 = models.BooleanField(default=False)
-	created = models.DateTimeField()
+	class Meta:
+		verbose_name = 'Dato de Plantilla'
+		verbose_name_plural = 'Datos de Plantillas'
+		db_table = 'templates_data'
+		ordering = ['bldgid']
+
+
+class TemplateDataLog(models.Model):
+	username = models.CharField(default="Null", max_length=30)
+	bldgid = models.ForeignKey(TemplateData, on_delete=models.RESTRICT)
+	first_validation = models.BooleanField(default=False)
+	second_validation = models.BooleanField(default=False)
+	created = models.DateTimeField(default=timezone.now)
 
 	def __str__(self):
-		template = '{0.username} {0.building} {0.created}'
+		template = '{0.username} {0.bldgid} {0.created}'
 		return template.format(self)
 
+	class Meta:
+		verbose_name = 'Registro de Dato'
+		verbose_name_plural = 'Registros de Datos'
+		db_table = 'templates_data_log'
+		ordering = ['bldgid']
 
-class LogSubirDatosP(models.Model):
+
+class TemplateDataUploadLog(models.Model):
 	username = models.CharField(max_length=30)
-	building = models.CharField(max_length=10)
+	bldgid = models.CharField(max_length=10)
 	active = models.BooleanField(default=True)
 
 	def __str__(self):
 		template = '{0.username} {0.building} {0.active}'
-"""
-class DatosTcam(models.Model):
-	leasid = models.CharField(max_length=10)
-	bldgid = models.CharField(max_length=10)
-	suitid = models.CharField(max_length=10)
-	occpname = models.CharField(max_length=50)
-	values = models.JSONField(null=True)
-
-	def __str__(self):
-		template = '{0.leasid} {0.bldgid} {0.suitid} {0.occpname} {0.values}'
 		return template.format(self)
 
-class DatosBmSdc(models.Model):
-	leasid = models.CharField(max_length=10)
-	bldgid = models.CharField(max_length=10)
-	suitid = models.CharField(max_length=10)
-	occpname = models.CharField(max_length=50)
-	values = models.JSONField(null=True)
+	class Meta:
+		verbose_name = 'Registro de subida'
+		verbose_name_plural = 'Registros de subida'
+		db_table = 'templates_data_upload_log'
+		ordering = ['bldgid']
 
-	def __str__(self):
-		template = '{0.leasid} {0.bldgid} {0.suitid} {0.occpname} {0.values}'
-		return template.format(self)
 
-class DatosBmPcc(models.Model):
-	leasid = models.CharField(max_length=10)
-	bldgid = models.CharField(max_length=10)
-	suitid = models.CharField(max_length=10)
-	occpname = models.CharField(max_length=50)
-	values = models.JSONField(null=True)
+@receiver(post_save, sender=TemplateData)
+def create_template_data_log(sender, instance, created, **kwargs):
+	if created:
+		if TemplateDataLog.objects.filter(bldgid=instance).exists():
+			d = TemplateDataLog.objects.filter(bldgid=instance)
+			d.delete()
 
-	def __str__(self):
-		template = '{0.leasid} {0.bldgid} {0.suitid} {0.occpname} {0.values}'
-		return template.format(self)
-"""
+		username = ""
+		TemplateDataLog.objects.create(username=username, bldgid=instance, first_validation=True)

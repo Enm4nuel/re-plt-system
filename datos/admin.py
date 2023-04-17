@@ -1,20 +1,20 @@
 from django.contrib import admin
 
-from .models import Datosp, LogDatosP, LogSubirDatosP
+from .models import TemplateData, TemplateDataLog, TemplateDataUploadLog
 
-@admin.register(Datosp)
-class DatosAdmin(admin.ModelAdmin):
-	list_display = ('id', 'leasid', 'bldgid', 'suitid', 'occpname', 'values')
+@admin.register(TemplateData)
+class TemplateDataAdmin(admin.ModelAdmin):
+	list_display = ('id', 'leasid', 'bldgid', 'suitid', 'occpname', 'fields')
 	ordering = ('bldgid',)
 	search_fields = ('bldgid',)
 	list_filter = ('bldgid',)
 
-@admin.register(LogDatosP)
-class LogDatosAdmin(admin.ModelAdmin):
-	list_display = ('id', 'username', 'building', 'created', 'real', 'real2')
+@admin.register(TemplateDataLog)
+class TemplateDataLogAdmin(admin.ModelAdmin):
+	list_display = ('id', 'username', 'bldgid', 'created', 'first_validation', 'second_validation')
 	ordering = ('created',)
 
-@admin.register(LogSubirDatosP)
-class LogSubirDatosAdmin(admin.ModelAdmin):
-	list_display = ('id', 'username', 'building', 'active')
+@admin.register(TemplateDataUploadLog)
+class TemplateDataUploadLogAdmin(admin.ModelAdmin):
+	list_display = ('id', 'username', 'bldgid', 'active')
 	ordering = ('active',)

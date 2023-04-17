@@ -1,12 +1,14 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from datos.models import Datosp, LogDatosP, LogSubirDatosP
+
+from datos.views import *
+from datos.models import *
 
 # Create your views here.
 
 def formatear_data(request):
 
-	data = Datosp.objects.all()
+	data = TemplateData.objects.all()
 
 	buildings = []
 

@@ -32,8 +32,9 @@ class Template(models.Model):
 
 
 class TemplateLog(models.Model):
+	username = models.CharField(max_length=30, default="Null")
 	bldgid = models.CharField(max_length=10)
-	batch = models.IntegerField(unique=True, primary_key=True)
+	batch = models.CharField(max_length=8, primary_key=True)
 	invoice_date = models.DateField(default=date.today)
 	created = models.DateTimeField(default=timezone.now)
 
