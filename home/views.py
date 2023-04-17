@@ -80,34 +80,7 @@ def subir_archivo(request):
 
 			file = request.FILES['file']
 			workbook = load_workbook(file)
-			sheet = workbook.active
-		
-			columns = []
-			for col in sheet.iter_cols(min_col=2):
-				columns.append(col[0].value)
-
-			data = []
-			filtr = ""
-
-			for row in sheet.iter_rows(min_row=2):
-
-				data2 = []
-
-				for c in range(4,len(columnas)):
-					data2.append(row[c+1].value)
-
-				data.append([row[1].value, row[2].value, row[3].value, row[4].value, data2])
-				filtro = str(row[2].value)
-
-			
-			a.filename = file.name
-			a.cols = columns
-			a.data = data
-			a.filtro = filtr
-			a.totales = []
-
-
-			templateDataUploadLog(1, request.user.username, filtro)
+			uploadDataToDb(request, workbook)
 
 			return redirect('/subir_archivo/confirmar/'+ file.name)
 
@@ -119,7 +92,6 @@ def subir_archivo(request):
 @login_required(login_url='/admin/')
 def subir_archivo_confirmar(request, filename):
 
-	print(a.filename)
 
 	#return render(request, 'C:/Users/Leonor Fischer/Documents/re-sys-main/home/templates/subir_archivo_confirmar.html', context={'columnas': columnas2, 'data': d, 'name': filename})
 	return render(request, 'C:/Users/Leonor Fischer/Documents/re-sys-main/home/templates/subir_archivo_confirmar.html', context={'columnas': a.cols, 'data': a.data, 'name': a.filename})
@@ -129,6 +101,9 @@ def subir_archivo_confirmar2(request, building):
 
 	#return render(request, 'C:/Users/Leonor Fischer/Documents/re-sys-main/home/templates/subir_archivo_confirmar.html', context={'columnas': columnas2, 'data': d, 'name': filename})
 	return render(request, 'C:/Users/Leonor Fischer/Documents/re-sys-main/home/templates/subir_archivo_confirmar.html', context={'columnas': a.cols, 'data': a.data, 'name': a.filename})
+
+
+
 
 @login_required(login_url='/admin/')
 def subir_archivo_confirmar_cc(request):

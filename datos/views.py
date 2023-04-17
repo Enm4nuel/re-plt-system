@@ -32,43 +32,53 @@ def visualizar_data(request, filename, workbook):
 
 	return 0
 
-def visualizar_data2(filename, workbook):
-
+def uploadDataToDb(request, workbook):
+	
+	# Accedo a los datos de la hoja activa o en uso del archivo excel
 	sheet = workbook.active
 
-	columnas = []
+	# Verificar si la data que se esta subiendo ya existe en la db
+	for row in sheet.iter_rows(min_row=2):
+
+		if TemplateData.objects.filter(bldgid=row[2]):
+			TemplateData.objects.filter(bldgid=row[2]).delete()
+			print("listo")
+		else:
+			print("no existe")
+
+		break
+
+	# Extraer las columnas que conforman el archivo de plantilla que se esta subiendo
+	columns = []
 	for col in sheet.iter_cols():
-		columnas.append(col[0].value)
+		columns.append(col[0].value)
 
-	if 't-cam' in filename:
-		DatosTcam.objects.all().delete()
-	elif 'bm-sdc' in filename:
-		DatosBmSdc.objects.all().delete()
-	elif 'bm-pcc' in filename:
-		DatosBmPcc.objects.all().delete()
+	# estableciendo una variable con valor "4", ya que las plantillas se conforman de 4 columnas
+	# predeterminadas con cada plantilla - Esto puede mejorar -
+	limit = 4
 
+	# Obtener el nombre del edificio que se esta cargando
+	filtr = ""
+
+	# Agregando los datos extraidos a la tabla
 	for row in sheet.iter_rows(min_row=2):
 		data = {}
-		for c in range(5,len(columnas)):
-			data[str(columnas[c])] = row[c].value
+		for c in range(limit+1,len(columns)):
+			data[str(columns[c])] = row[c].value
+		templateData(1, row[1].value, row[2].value, row[3].value, row[4].value, data)
+		print("Se han agregado los datos nuevos a ", row[2].value)
+		filtr = row[2].value
 
-		if 't-cam' in filename:
-			agregar_DatosTcam(row[1].value, row[2].value, row[3].value, row[4].value, data)
-			print("Se han agregado los datos nuevos a T-CAM")
-		elif 'bm-sdc' in filename:
-			agregar_DatosBmSdc(row[1].value, row[2].value, row[3].value, row[4].value, data)
-			print("Se han agregado los datos nuevos a BM-SDC")
-		elif 'bm-pcc' in filename:
-			agregar_DatosBmPcc(row[1].value, row[2].value, row[3].value, row[4].value, data)
-			print("Se han agregado los datos nuevos a BM-PCC")
-		else:
-			print("No se pudo agregar los datos a la base de datos...")
 
-	return 0
-	#return render(request, 'C:/Users/Leonor Fischer/Documents/re-sys-main/home/templates/subir_archivo_confirmar.html', context={'columnas': columnas, 'rows': rows})
+	templateDataUploadLog(1, request.user.username, filtr)
+	
+	
 
-def uploadDataToDb():
-	pass
+	# para crear un registro de la confirmacion de plantilla
+	#templateDataLog(1, request.user.username, a.filtro, True, False)
+
+	# para borrar el registro de subida de una plantilla
+	#templateDataUploadLog(2, request.user.username, "")
 
 def templateData(option, d1, d2, d3, d4, d5):
 	
