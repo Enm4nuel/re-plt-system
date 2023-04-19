@@ -17,7 +17,7 @@ class TemplateLogAdmin(admin.ModelAdmin):
 @admin.register(TemplateMonthlyCfg)
 class TemplateMonthlyCfgAdmin(admin.ModelAdmin):
 	list_display = ('id', 'rate', 'date')
-	ordering = ('id',)
+	ordering = ('-date',)
 
 @admin.register(TemplateMonthlyCfgLog)
 class TemplateMonthlyCfgLogAdmin(admin.ModelAdmin):

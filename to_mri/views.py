@@ -1,12 +1,14 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from datos.models import Datosp, LogDatosP, LogSubirDatosP
+
+from datos.views import *
+from datos.models import *
 
 # Create your views here.
 
 def formatear_data(request):
 
-	data = Datosp.objects.all()
+	data = TemplateData.objects.all()
 
 	buildings = []
 
@@ -17,10 +19,10 @@ def formatear_data(request):
 
 	# Visualizar datos por edificio
 	for d in data:
-		for k,v in d.values.items():
+		for k,v in d.fields.items():
 			if v is not None and v != 0 and v != "" and v != "0" and v != "0.0" and v != "0.00":
 				print("------------------------------------------")
-				print(d.leasid, "- Llave: ", k, "|", "Valor: ", v)
+				print("-", d.bldgid, "|", d.leasid, ", Llave: ", k, "|", "Valor: ", v)
 				print("------------------------------------------")
 
 	print(buildings)

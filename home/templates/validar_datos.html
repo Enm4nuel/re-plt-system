@@ -22,7 +22,7 @@
 		  			<a href="/" ><img height="90" width="220" src="{% static 'img/bmlogo-r.png' %}" class="rounded"></a>
 		  		</div>
 		  		<div class="col-4 container text-center">
-		  			<h1 class="navbar-brand float-start" href="/" style="text-align: center; font-size: 35px;" > Validacion de data </h1>
+		  			<h1 class="navbar-brand float-start" href="/" style="text-align: center; font-size: 35px;" > Validar Datos </h1>
 		  		</div>
 		  		
 		  		<div class="col-2 p-2">
@@ -52,27 +52,27 @@
 
 			<div class="accordion-item">
 
-				<h2 class="accordion-header" id="heading{{filtro.building}}">
+				<h2 class="accordion-header" id="heading{{filtro.bldgid}}">
 					<button 
 						class="accordion-button" 
 						type="button" 
 						data-bs-toggle="collapse" 
-						data-bs-target="#collapse{{filtro.building}}" 
+						data-bs-target="#collapse{{filtro.bldgid}}" 
 						aria-expanded="false" 
-						aria-controls="collapse{{filtro.building}}"
+						aria-controls="collapse{{filtro.bldgid}}"
 					>
-					{{filtro.building}}
+					{{filtro.bldgid}}
 					</button>
 				</h2>
 
 				<div 
-					id="collapse{{filtro.building}}" 
+					id="collapse{{filtro.bldgid}}" 
 					class="accordion-collapse collapse" 
-					aria-labelledby="heading{{filtro.building}}" 
+					aria-labelledby="heading{{filtro.bldgid}}" 
 					data-bs-parent="#accordionExample"
 				>
 					<div class="accordion-body">
-						{% if filtro.real2 == False %}
+						{% if filtro.second_validation == False %}
 							<a class="btn btn-success col-2 m-1" href="javascript:confirmar({{filtro.id}})"> 
 								<i class="bi bi-check2-circle"></i> 
 								Validar 
@@ -87,13 +87,13 @@
 						    <table class="table table-striped caption-top">
 								<tbody>
 									{% for i in data %}
-										{% if filtro.building == i.bldgid %}
+										{% if filtro.bldgid == i.bldgid %}
 											<tr>	
 												<td> {{i.leasid}} </td>
 												<td> {{i.bldgid}} </td>
 												<td> {{i.suitid}} </td>
 												<td> {{i.occpname}} </td>
-												{% for k,v in i.values.items %}
+												{% for k,v in i.fields.items %}
 													<td> {{v}} </td>
 												{% endfor %}
 											</tr>

@@ -1,8 +1,10 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.utils import timezone
+from datetime import date
 
-from .models import Datosp, LogDatosP, LogSubirDatosP
+from .models import TemplateData, TemplateDataLog, TemplateDataUploadLog
+from plantillas.models import *
 
 
 def visualizar_data(request, filename, workbook):
@@ -32,100 +34,94 @@ def visualizar_data(request, filename, workbook):
 
 	return 0
 
-def visualizar_data2(filename, workbook):
 
+def deleteData(bldgid):
+	# Eliminar data previamente subida a la db
+	TemplateData.objects.filter(bldgid=bldgid).delete()
+	print("listo")
+
+
+def getRate():
+
+	ap = TemplateMonthlyCfg.objects.order_by('-date')[:1]
+	print(ap)
+	return ap[0].rate
+
+
+def uploadDataToDb(request, workbook):
+	
+	# Accedo a los datos de la hoja activa o en uso del archivo excel
 	sheet = workbook.active
 
-	columnas = []
+	# Extraer las columnas que conforman el archivo de plantilla que se esta subiendo
+	columns = []
 	for col in sheet.iter_cols():
-		columnas.append(col[0].value)
+		columns.append(col[0].value)
 
-	if 't-cam' in filename:
-		DatosTcam.objects.all().delete()
-	elif 'bm-sdc' in filename:
-		DatosBmSdc.objects.all().delete()
-	elif 'bm-pcc' in filename:
-		DatosBmPcc.objects.all().delete()
+	# estableciendo una variable con valor "4", ya que las plantillas se conforman de 4 columnas
+	# predeterminadas con cada plantilla - Esto puede mejorar -
+	limit = 4
 
+	# Obtener el nombre del edificio que se esta cargando
+	filtr = ""
+
+	# Obtener taza definida para la facturacion de dicho mes
+	rate = getRate()
+
+	# Agregando los datos extraidos a la tabla
 	for row in sheet.iter_rows(min_row=2):
 		data = {}
-		for c in range(5,len(columnas)):
-			data[str(columnas[c])] = row[c].value
+		for c in range(limit+1,len(columns)):
+			data[str(columns[c])] = str(row[c].value * rate)
+		templateData(1, row[1].value, row[2].value, row[3].value, row[4].value, data)
+		print("Se han agregado los datos nuevos a ", row[2].value)
+		filtr = row[2].value
 
-		if 't-cam' in filename:
-			agregar_DatosTcam(row[1].value, row[2].value, row[3].value, row[4].value, data)
-			print("Se han agregado los datos nuevos a T-CAM")
-		elif 'bm-sdc' in filename:
-			agregar_DatosBmSdc(row[1].value, row[2].value, row[3].value, row[4].value, data)
-			print("Se han agregado los datos nuevos a BM-SDC")
-		elif 'bm-pcc' in filename:
-			agregar_DatosBmPcc(row[1].value, row[2].value, row[3].value, row[4].value, data)
-			print("Se han agregado los datos nuevos a BM-PCC")
+	templateDataUploadLog(1, request.user.username, filtr)
+
+
+def templateData(option, d1, d2, d3, d4, d5):
+	
+	# Para agregar datos a la tabla "template_data"
+	if option == 1:
+		d = TemplateData(leasid=d1, bldgid=d2, suitid=d3, occpname=d4, fields=d5)
+		d.save()
+
+
+def templateDataLog(option, d1, d2, d3, d4):
+	
+	# Agrega los datos cargados directamente desde la plantilla .xlsx
+	# Primero confirma si existe y edita, caso contrario crea
+	# De paso asigna True a el campo "First_validation" por default
+	if option == 1:
+
+		if TemplateDataLog.objects.filter(bldgid=d2).exists():
+			d = TemplateDataLog.objects.get(bldgid=d2)
+			d.username = d1
+			d.bldgid = d2
+			d.first_validation = d3
+			d.save()
 		else:
-			print("No se pudo agregar los datos a la base de datos...")
+			d = TemplateDataLog(
+				username=d1, 
+				bldgid=d2, 
+				first_validation=d3
+			)
+			d.save()
 
-	return 0
-	#return render(request, 'C:/Users/Leonor Fischer/Documents/re-sys-main/home/templates/subir_archivo_confirmar.html', context={'columnas': columnas, 'rows': rows})
-
-def agregar_Datosp(d1, d2, d3, d4, d5):
-	d = Datosp(leasid=d1, bldgid=d2, suitid=d3, occpname=d4, values=d5)
-	d.save()
-
-def agregar_LogDatosp(d1, d2, d3, d4):
-
-	if LogDatosP.objects.filter(building=d2).exists():
-		d = LogDatosP.objects.get(building=d2)
-		d.username = d1
-		d.building = d2
-		d.real = d3
-		d.real2 = d4
-		d.created = timezone.now()
-		d.save()
-	else:
-		d = LogDatosP(username=d1, building=d2, real=d3, real2=d4, created=timezone.now())
+	# Asignar como True el campo "second_validation"
+	elif option == 2:
+		d = TemplateDataLog.objects.get(id=d1)
+		d.second_validation = d2
 		d.save()
 
-	print("log de datos cargados, se ha ejecutado correctamente")
 
-def confirmar_LogDatosp(d1, d2):
-	d = LogDatosP.objects.get(id=d1)
-	d.real2 = d2
-	d.created = timezone.now()
-	d.save()
+def templateDataUploadLog(option, d1, d2):
 
-	print("segunda confirmacion correcta")
+	if option == 1:
+		d = TemplateDataUploadLog(username=d1, bldgid=d2)
+		d.save()
 
-def agregar_LogSubirDatosP(d1, d2):
+	elif option == 2:
+		d = TemplateDataUploadLog.objects.filter(username=d1).delete()
 
-	d = LogSubirDatosP(username=d1, building=d2)
-	d.save()
-
-def borrar_LogSubirDatosP(d1):
-	d = LogSubirDatosP.objects.filter(username=d1).delete()
-
-"""
-def agregar_DatosTcam(d1, d2, d3, d4, d5):
-	d = DatosTcam(leasid=d1, bldgid=d2, suitid=d3, occpname=d4, values=d5)
-	d.save()
-
-def agregar_DatosBmSdc(d1, d2, d3, d4, d5):
-	d = DatosBmSdc(leasid=d1, bldgid=d2, suitid=d3, occpname=d4, values=d5)
-	d.save()
-
-def agregar_DatosBmPcc(d1, d2, d3, d4, d5):
-	d = DatosBmPcc(leasid=d1, bldgid=d2, suitid=d3, occpname=d4, values=d5)
-	d.save()
-
-def probar_f1(d1, d2, d3, d4, d5):
-	d = Datos(bldgid=d1, leasid=d2, suitid=d3, descrptn=d4, value=d5)
-	d.save()
-
-def probar_f2(d0, d1, d2, d3, d4, d5):
-	d = Datos.objects.get(pk=d0)
-	d.bldgid = d1
-	d.leasid = d2
-	d.suitid = d3
-	d.descrptn = d4
-	d.value = d5
-	d.save()
-"""

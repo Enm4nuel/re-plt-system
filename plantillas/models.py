@@ -32,8 +32,9 @@ class Template(models.Model):
 
 
 class TemplateLog(models.Model):
+	username = models.CharField(max_length=30, default="Null")
 	bldgid = models.CharField(max_length=10)
-	batch = models.IntegerField(unique=True, primary_key=True)
+	batch = models.CharField(max_length=8, primary_key=True)
 	invoice_date = models.DateField(default=date.today)
 	created = models.DateTimeField(default=timezone.now)
 
@@ -56,7 +57,7 @@ class TemplateMonthlyCfg(models.Model):
 	date = models.DateField()
 
 	def __str__(self):
-		return "{}".format(self.rate)
+		return "{} {}".format(self.rate, self.date)
 
 	class Meta:
 		verbose_name = 'Ajuste de plantilla'
@@ -79,15 +80,6 @@ class TemplateMonthlyCfgLog(models.Model):
 		db_table = 'templates_monthly_config_log'
 		ordering = ['created']
 
-
-
-
-'''
-@receiver(post_save, sender=Template)
-def create_template_log(sender, instance, created, **kwargs):
-    if created:
-        TemplateLog.objects.create(bldgid=instance, batch=345)
-'''
 
 @receiver(post_save, sender=TemplateMonthlyCfg)
 def create_template_log(sender, instance, created, **kwargs):

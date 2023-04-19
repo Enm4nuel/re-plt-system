@@ -16,7 +16,7 @@ username = 'Data_Editor'
 password = 'jr03124300'
 # ENCRYPT defaults to yes starting in ODBC Driver 18. It's good to always specify ENCRYPT=yes on the client side to avoid MITM attacks.
 
-def loadData(building, coin):
+def loadData(building, coin, batch, user):
 
 	cnxn = pyodbc.connect('DRIVER={ODBC Driver 18 for SQL Server};SERVER='+server+';DATABASE='+database+';ENCRYPT=no;UID='+username+';PWD='+ password)
 	cursor = cnxn.cursor()
@@ -46,19 +46,19 @@ def loadData(building, coin):
 			if i.bldgid == building and i.currcode == coin:
 				descripciones.append(v)
 
-	generar_plantilla(coin, building, descripciones, leasid, bldgid, suitid, occpname)
+	generar_plantilla(user, batch, coin, building, descripciones, leasid, bldgid, suitid, occpname)
 	cursor.close()
 
 	return 0
 
-def generar_plantilla(coin, building, index = [], leasid = [], bldgid = [], suitid = [], occpname = []):
+def generar_plantilla(username, batch, coin, building, index = [], leasid = [], bldgid = [], suitid = [], occpname = []):
 	d = {'LEASID': leasid, 'BLDGID': bldgid, 'SUITID': suitid, 'OCCPNAME': occpname}
 	for i in range(len(index)):
 		d[str(index[i])] = ""
 	df = pd.DataFrame(data=d)
 	df.to_excel("Plantilla" + building + "_" + coin + ".xlsx")
 
-	TemplateLog.objects.create(bldgid=building, batch=3435)
+	TemplateLog.objects.create(username=username, bldgid=building, batch=batch)
 
 
 def prueba_generar_plantilla(moneda, edificio, index = [], leasid = [], bldgid = [], suitid = [], occpname = []):
@@ -96,6 +96,8 @@ def prueba_generar_plantilla(moneda, edificio, index = [], leasid = [], bldgid =
 	#ws['1'].font = Font(bold=True)
 
 	wb.save("Plantilla" + edificio + "_" + moneda + ".xlsx")
+
+
 
 
 """

@@ -3,8 +3,6 @@ from django.http import HttpResponse
 from django.template import Context, Template
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.utils.datastructures import MultiValueDictKeyError
-from django.http import HttpResponseRedirect
 from django.contrib import messages
 
 import os
@@ -19,11 +17,11 @@ from openpyxl import load_workbook
 from plantillas.models import *
 from plantillas.views import *
 
-from datos.views import visualizar_data, agregar_Datosp, agregar_LogDatosp, confirmar_LogDatosp, agregar_LogSubirDatosP, borrar_LogSubirDatosP
-from datos.models import Datosp, LogDatosP, LogSubirDatosP
+from datos.views import *
+from datos.models import *
 
-#columnas2 = [] 
-#filtro = []
+# Global var
+base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))+"/home"
 
 def su_test(user):
 	return user.is_superuser
@@ -31,18 +29,16 @@ def su_test(user):
 @login_required(login_url='/admin/')
 def home(request):
 
-	if LogSubirDatosP.objects.filter(username=request.user.username).exists():
-		d = LogSubirDatosP.objects.get(username=request.user.username)
+	if TemplateDataUploadLog.objects.filter(username=request.user.username).exists():
+		d = TemplateDataUploadLog.objects.get(username=request.user.username)
 		if request.user.is_authenticated:
 			if d.active == True:
 				messages.warning(request, "Tienes una plantilla precargada con informacion sin validar!")
-				return HttpResponseRedirect("/subir_archivo/confirmar/"+d.building)
-				#print("User is logged in :)")
-				#print(f"Username --> {request.user.username}")
+				return redirect("/subir_archivo/confirmar/")
 	else:
 		print("User is not logged in :(")
 
-	return render(request, 'C:/Users/Leonor Fischer/Documents/re-sys-main/home/templates/home.html', context={"message": messages})
+	return render(request, '{}/templates/home.html'.format(base_dir), context={"message": messages})
 
 @login_required(login_url='/admin/')
 def descargar_csv(request):
@@ -52,12 +48,13 @@ def descargar_csv(request):
 		if 'edificio' in request.POST:
 			building = request.POST.get('edificio')
 			coin = request.POST.get('moneda')
+			batch = request.POST.get('batch')
 
-			loadData(building, coin)
+			loadData(building, coin, batch, request.user.username)
 
 			messages.success(request, "Se ha descargado la plantilla con exito!")
 
-			return HttpResponseRedirect('/')
+			return redirect('/')
 		
 	else:
 		return 0
@@ -74,8 +71,6 @@ def descargar_csv(request):
 	
 	return render(request, 'C:/Users/Leonor Fischer/Documents/re-sys-main/home/templates/descargar_plantilla.html', context={'edificios': edificios, 'monedas': monedas})
 
-
-
 @login_required(login_url='/admin/')
 def subir_archivo(request):
 
@@ -85,177 +80,68 @@ def subir_archivo(request):
 
 			file = request.FILES['file']
 			workbook = load_workbook(file)
-			sheet = workbook.active
-		
-			columnas = []
-			for col in sheet.iter_cols(min_col=2):
-				columnas.append(col[0].value)
+			uploadDataToDb(request, workbook)
 
-			data = []
-			filtro = ""
-
-			"""
-			for row in sheet.iter_rows(min_row=2):
-
-				data2 = {}
-
-				for c in range(4,len(columnas)):
-					data2[str(columnas[c])] = row[c+1].value
-
-					
-				data.append([row[1].value, row[2].value, row[3].value, row[4].value, data2])
-
-				filtro = row[2].value
-			"""
-
-			for row in sheet.iter_rows(min_row=2):
-
-				data2 = []
-
-				for c in range(4,len(columnas)):
-					data2.append(row[c+1].value)
-
-				data.append([row[1].value, row[2].value, row[3].value, row[4].value, data2])
-				filtro = str(row[2].value)
-
-			
-			a.filename = file.name
-			a.cols = columnas
-			a.data = data
-			a.filtro = filtro
-			a.totales = []
-
-
-			agregar_LogSubirDatosP(request.user.username, filtro)
-
-			return HttpResponseRedirect('/subir_archivo/confirmar/'+ file.name)
+			return redirect('/subir_archivo/confirmar/')
 
 	else:
 		print("No has hecho ningun POST")
 
 	return render(request, 'C:/Users/Leonor Fischer/Documents/re-sys-main/home/templates/subir_archivo.html')
 
-
-
-"""
 @login_required(login_url='/admin/')
-def subir_archivo(request):
+def subir_archivo_confirmar(request):
 
-	if request.method == 'POST':
+	filtro = TemplateDataUploadLog.objects.filter(username=request.user.username)
+	filtr = ""
+	for f in filtro:
+		filtr = f.bldgid
 
-		if 'file' in request.FILES:
-
-			file = request.FILES['file']
-			workbook = load_workbook(file)
-			sheet = workbook.active
-			
-			visualizar_data(request, file.name, workbook)
-
-			columnas2.clear()
-			for col in sheet.iter_cols(min_col=2):
-				columnas2.append(col[0].value)
-
-			for row in sheet.iter_rows(min_row=2):
-				filtro.append(row[2].value)
-				break
-				#rows.append([row[0].value, row[1].value, row[2].value, row[3].value, row[4].value, row[5].value, row[6].value, row[7].value])
-
-			return HttpResponseRedirect('/subir_archivo/confirmar/'+ file.name)
-
-	else:
-		print("No has hecho ningun POST")
-
-	return render(request, 'C:/Users/Leonor Fischer/Documents/re-sys-main/home/templates/subir_archivo.html')
-"""
-
-
-
-@login_required(login_url='/admin/')
-def subir_archivo_confirmar(request, filename):
-
-	print(a.filename)
-
-	#return render(request, 'C:/Users/Leonor Fischer/Documents/re-sys-main/home/templates/subir_archivo_confirmar.html', context={'columnas': columnas2, 'data': d, 'name': filename})
-	return render(request, 'C:/Users/Leonor Fischer/Documents/re-sys-main/home/templates/subir_archivo_confirmar.html', context={'columnas': a.cols, 'data': a.data, 'name': a.filename})
-
-@login_required(login_url='/admin/')
-def subir_archivo_confirmar2(request, building):
-
-	#return render(request, 'C:/Users/Leonor Fischer/Documents/re-sys-main/home/templates/subir_archivo_confirmar.html', context={'columnas': columnas2, 'data': d, 'name': filename})
-	return render(request, 'C:/Users/Leonor Fischer/Documents/re-sys-main/home/templates/subir_archivo_confirmar.html', context={'columnas': a.cols, 'data': a.data, 'name': a.filename})
-
-
-@login_required(login_url='/admin/')
-def subir_archivo_confirmar_cc(request):
-
-	for row in a.data:
-		if Datosp.objects.filter(bldgid=row[1]):
-			Datosp.objects.filter(bldgid=row[1]).delete()
-			print("listo")
-		else:
-			print("no existe")
-		break
+	data = TemplateData.objects.filter(bldgid__contains=filtr)
 	
-	limit = 4
+	columns = ["LEASID", "BLDGID", "SUITID", "OCCPNAME"]
+	for d in data:
+		for k, v in d.fields.items():
+			if k not in columns:
+				columns.append(k)	
 
-	for row in a.data:
-		data = {}
-		for c in range(limit,len(a.cols)):
-			data[str(a.cols[c])] = row[limit][c-limit]
-		agregar_Datosp(row[0], row[1], row[2], row[3], data)
-		print("Se han agregado los datos nuevos a ", row[1])
-
-	agregar_LogDatosp(request.user.username, a.filtro, True, False)
-	borrar_LogSubirDatosP(request.user.username)
-
-	"""data = LogDatosP.objects.get(building__contains=filtro[0])
-	data.real = True
-	data.save()
-	print(data)
-	print("subir_archivo_confirmar_cc sirve")"""
-	return HttpResponseRedirect("/")
+	return render(request, 'C:/Users/Leonor Fischer/Documents/re-sys-main/home/templates/subir_archivo_confirmar.html', context={'columns': columns, 'data': data, 'filtr': filtr, 'name': 'plantilla'})
 
 @login_required(login_url='/admin/')
-def subir_archivo_confirmar_dc(request):
+def subir_archivo_confirmar_cc(request, bldgid):
 
-	a.filename = ""
-	a.cols = []
-	a.data = []
-	a.filtro = ""
-	a.totales = []
+	templateDataLog(1, request.user.username, bldgid, True, False)
+	templateDataUploadLog(2, request.user.username, "")
 
-	borrar_LogSubirDatosP(request.user.username)
+	return redirect("/")
 
-	print("imprimiendo objeto de nombre: a \n", a)
-	return HttpResponseRedirect("/")
+@login_required(login_url='/admin/')
+def subir_archivo_confirmar_dc(request, bldgid):
 
+	deleteData(bldgid)
+	templateDataUploadLog(2, request.user.username, "")
+
+	return redirect("/")
 
 
 @login_required(login_url='/admin/')
 @user_passes_test(su_test)
 def validar_datos(request):
 	
-	data = Datosp.objects.all()
-	filtros = LogDatosP.objects.all()
-	#filtros = []
-
-	#for f in filtro:
-		#filtros.append(f.building)
-
-	#print(filtros)
+	data = TemplateData.objects.all()
+	filtros = TemplateDataLog.objects.all()
 
 	return render(request, 'C:/Users/Leonor Fischer/Documents/re-sys-main/home/templates/validar_datos.html', context={'data': data, 'filtros': filtros})
-
 
 @login_required(login_url='/admin/')
 @user_passes_test(su_test)
 def validar_datos_confirmar(request, id):
 
-	d = LogDatosP.objects.get(id=id)
-	if d.real2 == True:
-		confirmar_LogDatosp(id, False)
+	d = TemplateDataLog.objects.get(id=id)
+	if d.second_validation == True:
+		templateDataLog(2, id, False, "", "")
 	else:
-		confirmar_LogDatosp(id, True)
+		templateDataLog(2, id, True, "", "")
 
 	return HttpResponseRedirect("/validar_datos/")
 
@@ -265,22 +151,6 @@ def validar_datos_confirmar(request, id):
 @user_passes_test(su_test)
 def postear_datos(request):
 	
-	data = LogDatosP.objects.all().order_by('created').values()
-	
+	data = TemplateDataLog.objects.all().order_by('created').values()
 
 	return render(request, 'C:/Users/Leonor Fischer/Documents/re-sys-main/home/templates/postear_datos.html', context={'data': data})
-
-
-
-class Archivo:
-	def __init__(self, filename, cols, data, filtro, totales):
-		self.filename = filename
-		self.cols = cols
-		self.data = data
-		self.filtro = filtro
-		self.totales = totales
-
-	def add(self, dato):
-		self.data.append(dato)
-
-a = Archivo("", [], [], "", [])
