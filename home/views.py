@@ -139,9 +139,9 @@ def validar_datos_confirmar(request, id):
 
 	d = TemplateDataLog.objects.get(id=id)
 	if d.second_validation == True:
-		templateDataLog(2, id, False, "", "", "")
+		templateDataLog(2, id, False, "", "")
 	else:
-		templateDataLog(2, id, True, "", "", "")
+		templateDataLog(2, id, True, "", "")
 
 	return HttpResponseRedirect("/validar_datos/")
 

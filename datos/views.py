@@ -1,8 +1,10 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.utils import timezone
+from datetime import date
 
 from .models import TemplateData, TemplateDataLog, TemplateDataUploadLog
+from plantillas.models import *
 
 
 def visualizar_data(request, filename, workbook):
@@ -39,6 +41,13 @@ def deleteData(bldgid):
 	print("listo")
 
 
+def getRate():
+
+	ap = TemplateMonthlyCfg.objects.order_by('-date')[:1]
+	print(ap)
+	return ap[0].rate
+
+
 def uploadDataToDb(request, workbook):
 	
 	# Accedo a los datos de la hoja activa o en uso del archivo excel
@@ -56,25 +65,19 @@ def uploadDataToDb(request, workbook):
 	# Obtener el nombre del edificio que se esta cargando
 	filtr = ""
 
+	# Obtener taza definida para la facturacion de dicho mes
+	rate = getRate()
+
 	# Agregando los datos extraidos a la tabla
 	for row in sheet.iter_rows(min_row=2):
 		data = {}
 		for c in range(limit+1,len(columns)):
-			data[str(columns[c])] = row[c].value
+			data[str(columns[c])] = str(row[c].value * rate)
 		templateData(1, row[1].value, row[2].value, row[3].value, row[4].value, data)
 		print("Se han agregado los datos nuevos a ", row[2].value)
 		filtr = row[2].value
 
-
 	templateDataUploadLog(1, request.user.username, filtr)
-	
-	
-
-	# para crear un registro de la confirmacion de plantilla
-	#templateDataLog(1, request.user.username, a.filtro, True, False)
-
-	# para borrar el registro de subida de una plantilla
-	#templateDataUploadLog(2, request.user.username, "")
 
 
 def templateData(option, d1, d2, d3, d4, d5):
@@ -108,9 +111,8 @@ def templateDataLog(option, d1, d2, d3, d4):
 
 	# Asignar como True el campo "second_validation"
 	elif option == 2:
-		d = LogDatosP.objects.get(id=d1)
-		d.real2 = d2
-		d.created = timezone.now()
+		d = TemplateDataLog.objects.get(id=d1)
+		d.second_validation = d2
 		d.save()
 
 

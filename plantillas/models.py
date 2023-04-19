@@ -57,7 +57,7 @@ class TemplateMonthlyCfg(models.Model):
 	date = models.DateField()
 
 	def __str__(self):
-		return "{}".format(self.rate)
+		return "{} {}".format(self.rate, self.date)
 
 	class Meta:
 		verbose_name = 'Ajuste de plantilla'
@@ -80,15 +80,6 @@ class TemplateMonthlyCfgLog(models.Model):
 		db_table = 'templates_monthly_config_log'
 		ordering = ['created']
 
-
-
-
-'''
-@receiver(post_save, sender=Template)
-def create_template_log(sender, instance, created, **kwargs):
-    if created:
-        TemplateLog.objects.create(bldgid=instance, batch=345)
-'''
 
 @receiver(post_save, sender=TemplateMonthlyCfg)
 def create_template_log(sender, instance, created, **kwargs):
