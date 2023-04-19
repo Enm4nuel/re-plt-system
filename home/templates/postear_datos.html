@@ -66,13 +66,13 @@
 						<tbody>
 							{% for d in data %}
 								<tr>
-									<td> {{d.building}} </td>
-									{% if d.real == True %}
+									<td> {{d.bldgid}} </td>
+									{% if d.first_validation == True %}
 										<td> <i class="bi bi-check-circle-fill text-success"></i> </td>
 									{% else %}
 										<td> <i class="bi bi-x-circle-fill text-danger"></i> </td>
 									{% endif %}
-									{% if d.real2 == True %}
+									{% if d.second_validation == True %}
 										<td> <i class="bi bi-check-circle-fill text-success"></i> </td>
 									{% else %}
 										<td> <i class="bi bi-x-circle-fill text-danger"></i> </td>
@@ -102,7 +102,7 @@
 			    <div class="col-md-8">
 			      <div class="card-body">
 			        <h5 class="card-title">{{d.username}}</h5>
-			        <p class="card-text">{{d.building}}</p>
+			        <p class="card-text">{{d.bldgid}}</p>
 			        <p class="card-text"><small class="text-muted">{{d.created}}</small></p>
 			      </div>
 			    </div>

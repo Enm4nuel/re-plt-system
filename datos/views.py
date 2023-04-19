@@ -32,21 +32,17 @@ def visualizar_data(request, filename, workbook):
 
 	return 0
 
+
+def deleteData(bldgid):
+	# Eliminar data previamente subida a la db
+	TemplateData.objects.filter(bldgid=bldgid).delete()
+	print("listo")
+
+
 def uploadDataToDb(request, workbook):
 	
 	# Accedo a los datos de la hoja activa o en uso del archivo excel
 	sheet = workbook.active
-
-	# Verificar si la data que se esta subiendo ya existe en la db
-	for row in sheet.iter_rows(min_row=2):
-
-		if TemplateData.objects.filter(bldgid=row[2]):
-			TemplateData.objects.filter(bldgid=row[2]).delete()
-			print("listo")
-		else:
-			print("no existe")
-
-		break
 
 	# Extraer las columnas que conforman el archivo de plantilla que se esta subiendo
 	columns = []
@@ -80,6 +76,7 @@ def uploadDataToDb(request, workbook):
 	# para borrar el registro de subida de una plantilla
 	#templateDataUploadLog(2, request.user.username, "")
 
+
 def templateData(option, d1, d2, d3, d4, d5):
 	
 	# Para agregar datos a la tabla "template_data"
@@ -95,22 +92,18 @@ def templateDataLog(option, d1, d2, d3, d4):
 	# De paso asigna True a el campo "First_validation" por default
 	if option == 1:
 
-		if TemplateDataLog.objects.filter(bldgid_id=d2).exists():
-			d = TemplateDataLog.objects.get(bldgid_id=d2)
+		if TemplateDataLog.objects.filter(bldgid=d2).exists():
+			d = TemplateDataLog.objects.get(bldgid=d2)
 			d.username = d1
 			d.bldgid = d2
 			d.first_validation = d3
-			d.second_validation = d4
-			d.created = timezone.now()
 			d.save()
 		else:
 			d = TemplateDataLog(
 				username=d1, 
-				bldgid_id=d2, 
-				first_validation=d3, 
-				second_validation=d4, 
-				created=timezone.now()
-				)
+				bldgid=d2, 
+				first_validation=d3
+			)
 			d.save()
 
 	# Asignar como True el campo "second_validation"

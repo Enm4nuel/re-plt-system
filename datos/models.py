@@ -52,7 +52,7 @@ class TemplateData(models.Model):
 
 class TemplateDataLog(models.Model):
 	username = models.CharField(default="Null", max_length=30)
-	bldgid = models.ForeignKey(TemplateData, on_delete=models.RESTRICT)
+	bldgid = models.CharField(max_length=10)
 	first_validation = models.BooleanField(default=False)
 	second_validation = models.BooleanField(default=False)
 	created = models.DateTimeField(default=timezone.now)
@@ -74,7 +74,7 @@ class TemplateDataUploadLog(models.Model):
 	active = models.BooleanField(default=True)
 
 	def __str__(self):
-		template = '{0.username} {0.building} {0.active}'
+		template = '{0.username} {0.bldgid} {0.active}'
 		return template.format(self)
 
 	class Meta:
@@ -82,14 +82,3 @@ class TemplateDataUploadLog(models.Model):
 		verbose_name_plural = 'Registros de subida'
 		db_table = 'templates_data_upload_log'
 		ordering = ['bldgid']
-
-
-@receiver(post_save, sender=TemplateData)
-def create_template_data_log(sender, instance, created, **kwargs):
-	if created:
-		if TemplateDataLog.objects.filter(bldgid=instance).exists():
-			d = TemplateDataLog.objects.filter(bldgid=instance)
-			d.delete()
-
-		username = ""
-		TemplateDataLog.objects.create(username=username, bldgid=instance, first_validation=True)

@@ -34,7 +34,7 @@ def home(request):
 		if request.user.is_authenticated:
 			if d.active == True:
 				messages.warning(request, "Tienes una plantilla precargada con informacion sin validar!")
-				return redirect("/subir_archivo/confirmar/"+d.bldgid)
+				return redirect("/subir_archivo/confirmar/")
 	else:
 		print("User is not logged in :(")
 
@@ -82,7 +82,7 @@ def subir_archivo(request):
 			workbook = load_workbook(file)
 			uploadDataToDb(request, workbook)
 
-			return redirect('/subir_archivo/confirmar/'+ file.name)
+			return redirect('/subir_archivo/confirmar/')
 
 	else:
 		print("No has hecho ningun POST")
@@ -90,61 +90,37 @@ def subir_archivo(request):
 	return render(request, 'C:/Users/Leonor Fischer/Documents/re-sys-main/home/templates/subir_archivo.html')
 
 @login_required(login_url='/admin/')
-def subir_archivo_confirmar(request, filename):
+def subir_archivo_confirmar(request):
 
+	filtro = TemplateDataUploadLog.objects.filter(username=request.user.username)
+	filtr = ""
+	for f in filtro:
+		filtr = f.bldgid
 
-	#return render(request, 'C:/Users/Leonor Fischer/Documents/re-sys-main/home/templates/subir_archivo_confirmar.html', context={'columnas': columnas2, 'data': d, 'name': filename})
-	return render(request, 'C:/Users/Leonor Fischer/Documents/re-sys-main/home/templates/subir_archivo_confirmar.html', context={'columnas': a.cols, 'data': a.data, 'name': a.filename})
-
-@login_required(login_url='/admin/')
-def subir_archivo_confirmar2(request, building):
-
-	#return render(request, 'C:/Users/Leonor Fischer/Documents/re-sys-main/home/templates/subir_archivo_confirmar.html', context={'columnas': columnas2, 'data': d, 'name': filename})
-	return render(request, 'C:/Users/Leonor Fischer/Documents/re-sys-main/home/templates/subir_archivo_confirmar.html', context={'columnas': a.cols, 'data': a.data, 'name': a.filename})
-
-
-
-
-@login_required(login_url='/admin/')
-def subir_archivo_confirmar_cc(request):
-
-	for row in a.data:
-		if TemplateData.objects.filter(bldgid=row[1]):
-			TemplateData.objects.filter(bldgid=row[1]).delete()
-			print("listo")
-		else:
-			print("no existe")
-		break
+	data = TemplateData.objects.filter(bldgid__contains=filtr)
 	
-	limit = 4
+	columns = ["LEASID", "BLDGID", "SUITID", "OCCPNAME"]
+	for d in data:
+		for k, v in d.fields.items():
+			if k not in columns:
+				columns.append(k)	
 
-	for row in a.data:
-		data = {}
-		for c in range(limit,len(a.cols)):
-			data[str(a.cols[c])] = row[limit][c-limit]
-		templateData(1, row[0], row[1], row[2], row[3], data)
-		print("Se han agregado los datos nuevos a ", row[1])
+	return render(request, 'C:/Users/Leonor Fischer/Documents/re-sys-main/home/templates/subir_archivo_confirmar.html', context={'columns': columns, 'data': data, 'filtr': filtr, 'name': 'plantilla'})
 
-	# para crear un registro de la confirmacion de plantilla
-	#templateDataLog(1, request.user.username, a.filtro, True, False)
+@login_required(login_url='/admin/')
+def subir_archivo_confirmar_cc(request, bldgid):
 
-	# para borrar el registro de subida de una plantilla
+	templateDataLog(1, request.user.username, bldgid, True, False)
 	templateDataUploadLog(2, request.user.username, "")
 
 	return redirect("/")
 
 @login_required(login_url='/admin/')
-def subir_archivo_confirmar_dc(request):
+def subir_archivo_confirmar_dc(request, bldgid):
 
-	a.filename = ""
-	a.cols = []
-	a.data = []
-	a.filtro = ""
-	a.totales = []
-
+	deleteData(bldgid)
 	templateDataUploadLog(2, request.user.username, "")
 
-	print("imprimiendo objeto de nombre: a \n", a)
 	return redirect("/")
 
 
@@ -161,7 +137,7 @@ def validar_datos(request):
 @user_passes_test(su_test)
 def validar_datos_confirmar(request, id):
 
-	d = TemplateData.objects.get(id=id)
+	d = TemplateDataLog.objects.get(id=id)
 	if d.second_validation == True:
 		templateDataLog(2, id, False, "", "", "")
 	else:
@@ -178,18 +154,3 @@ def postear_datos(request):
 	data = TemplateDataLog.objects.all().order_by('created').values()
 
 	return render(request, 'C:/Users/Leonor Fischer/Documents/re-sys-main/home/templates/postear_datos.html', context={'data': data})
-
-
-
-class Archivo:
-	def __init__(self, filename, cols, data, filtro, totales):
-		self.filename = filename
-		self.cols = cols
-		self.data = data
-		self.filtro = filtro
-		self.totales = totales
-
-	def add(self, dato):
-		self.data.append(dato)
-
-a = Archivo("", [], [], "", [])
