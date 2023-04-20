@@ -1,0 +1,60 @@
+{% extends "index.html" %}
+{% load static %}
+
+{% block csschild %} <link type="text/css" rel="stylesheet" href="{% static 'css/stylesdescargarplantilla.css' %}" /> {% endblock%}
+
+{% block title %} <title> Descargar Plantilla </title> {% endblock %}
+
+{% block titlepage %} Descargar Plantilla {% endblock %}
+
+{% block content %}
+
+	<div id="div_prin" class="container d-flex justify-content-center">
+
+		<form id="formGP" action="/descargar_csv/" method="post" enctype="multipart/form-data">
+			{% csrf_token %}
+		    <legend> Parametros de plantilla </legend>
+
+		    <div class="row g-3">
+
+			    <div class="col-auto ">
+			      <label for="edificio" class="form-label">Edificio</label>
+			      <select id="edificio" name="edificio" class="form-select">
+			      	<option selected> Selecciona el edificio... </option>
+			      	{% for edificio in edificios %}
+			      		<option value="{{edificio}}"> {{edificio}} </option>
+			      	{% endfor %}
+			      </select>
+			    </div>
+
+			    <div class="col-auto ">
+			      <label for="moneda" class="form-label">Moneda</label>
+			      <select id="moneda" name="moneda" class="form-select" disabled>
+			      	<option selected> Selecciona la moneda... </option>
+			      	{% for moneda in monedas %}
+			      		<option value="{{moneda}}"> {{moneda}} </option>
+			      	{% endfor %}
+			      </select>
+			    </div>
+
+			</div>
+
+			<div class="row g-3">
+
+			    <div class="col-auto ">
+			      <label for="batch" class="form-label">Id de Batch</label>
+			      <input id="batch" name="batch" type="number" class="form-control" placeholder="Numero de batch" disabled>
+			    </div>
+
+			</div>
+
+		    <button type="submit" id="btn_gen_plt" class="btn btn-outline-success mt-3" disabled> Generar plantilla </button>
+
+		</form>
+
+		{% block scripts %}
+			<script src="../static/js/descargar_plantilla.js"></script>
+		{% endblock %}
+	
+
+{% endblock %}

@@ -1,54 +1,13 @@
+{% extends "index.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
 
-	<link type="text/css" rel="stylesheet" href="{% static 'css/stylesHome.css' %}" />
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
-	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title> Sistema de plantillas </title>
+{% block csschild %} <link type="text/css" rel="stylesheet" href="{% static 'css/home.css' %}" /> {% endblock%}
 
-</head>
-<body>
+{% block title %} <title> Sistema de Plantillas </title> {% endblock %}
 
-	<header>
-		<nav class="navbar navbar-expand-lg navbar-light" style="background-color: rgba(0, 0, 0, 0.05);">
+{% block titlepage %} Sistema de Plantillas {% endblock %}
 
-		  	<div class="container-fluid">
-
-		  		<div class="col-4">
-		  			<a href="/" ><img height="90" width="220" src="{% static 'img/bmlogo-r.png' %}" class="rounded"></a>
-		  		</div>
-
-		  		<div class="col-4 text-center">
-		  			<h1 class="navbar-brand float-start" href="/" style="text-align: center; font-size: 30px;" > Sistema de plantillas </h1>
-		  		</div>
-		  		
-		  		<div class="col-2 p-2">
-	  			    {% if user.is_authenticated %}
-	  			    	<div class="btn-group dropstart">
-						  <span class="dropdown-toggle text-reset fw-bold" data-bs-toggle="dropdown" aria-expanded="false">
-						    <i class="bi bi-gear-fill"></i> {{ user.get_username }}
-						  </span>
-						  <ul class="dropdown-menu">
-						  	{% if user.is_superuser %}
-						    	<li><a class="dropdown-item" href="/plantillas/modificar_plantillas/"> Modificar plantillas </a></li>
-						    	<li><a class="dropdown-item" href="/admin/"> Administracion </a></li>
-						    	<li><hr class="dropdown-divider"></li>
-						    {% endif %}
-						    <li><a class="dropdown-item" href="/admin/logout/"> Salir </a></li>
-						  </ul>
-						</div>
-				   	{% endif %}
-		        </div>
-
-	    	</div>
-
-		</nav>
-	</header>
+{% block content %}
 
 	{% for message in messages %}
 		<div class="alert alert-{{message.tags}} alert-dismissible m-2" id="msg" role="alert">
@@ -58,71 +17,60 @@
 	{% endfor %}
 
 	{% if user.is_superuser %}
-	<div id="div_prin" class="container flex-column justify-content-center align-items-center">
-
-		<div class="p-2" style="margin-left: 145px;">
-			<form id="formDP" action="{% url 'descargar_csv' %}" method="post" enctype="multipart/form-data">
-				{% csrf_token %}
-				<input type="submit" name="btn1" class="btn btn-outline-primary p-1 col-8" value="Descargar Plantilla" />
-			</form>
-		</div>
-
-		
-		<div class="p-2" style="margin-left: 145px;">
-			<form id="formSA" action="/subir_archivo/" method="post" enctype="multipart/form-data">
-				{% csrf_token %}
-				<input type="submit" name="btn2" class="btn btn-outline-primary p-1 col-8" value="Subir Archivo" />
-			</form>
-		</div>
-		
-
-		<div class="p-2" style="margin-left: 145px;">
-			<form id="formV" action="{% url 'validar_datos' %}" method="post" enctype="multipart/form-data">
-				{% csrf_token %}
-				<button type="submit" name="btn3" class="btn btn-outline-primary p-1 col-8" > Validar Datos </button>
-			</form>
-		</div>
-
-		<div class="p-2" style="margin-left: 145px;">
-			<form id="formP" action="{% url 'postear_datos' %}" method="post" enctype="multipart/form-data">
-				{% csrf_token %}
-				<button type="submit" name="btn4" class="btn btn-outline-primary p-1 col-8" > Postear Datos </button>
-			</form>
-		</div>
-		{% else %}
-		<div id="div_prin" class="container flex-column justify-content-center align-items-center">
-
-		<div class="p-2" style="margin-left: 145px;">
-			<form id="formDP" action="{% url 'descargar_csv' %}" method="post" enctype="multipart/form-data">
-				{% csrf_token %}
-				<input type="submit" name="btn1" class="btn btn-outline-primary p-1 col-8" value="Descargar Plantilla" />
-			</form>
-		</div>
-
-		
-		<div class="p-2" style="margin-left: 145px;">
-			<form id="formSA" action="/subir_archivo/" method="post" enctype="multipart/form-data">
-				{% csrf_token %}
-				<input type="submit" name="btn2" class="btn btn-outline-primary p-1 col-8" value="Subir Archivo" />
-			</form>
-		</div>
-		</div>
-		{% endif %}
-
-		
-
-	</div>
-
-	{% block footer %}
-	<!-- Footer -->
-	<footer class="text-center text-lg-start bg-light text-muted">
-	  <div class="text-center p-2" style="background-color: rgba(0, 0, 0, 0.05);">
-	    © 2023,
-	    <a class="text-reset fw-bold"> Todos los derechos reservados</a>
-	  </div>
-	</footer>
-	<!-- Footer -->
-	{% endblock %}
 	
-</body>
-</html>
+		<div id="div_prin" class="col-4 m-5 p-3 container bg-light">
+
+			<div class="p-2">
+				<form id="formDP" action="{% url 'csv_download' %}" method="post" enctype="multipart/form-data">
+					{% csrf_token %}
+					<input type="submit" name="btn1" class="btn btn-outline-primary p-2 col-12" value="Descargar Plantilla" />
+				</form>
+			</div>
+
+			<div class="p-2">
+				<form id="formSA" action="{% url 'csv_upload' %}" method="post" enctype="multipart/form-data">
+					{% csrf_token %}
+					<input type="submit" name="btn2" class="btn btn-outline-primary p-2 col-12" value="Subir Plantilla" />
+				</form>
+			</div>
+			
+			<div class="p-2">
+				<form id="formV" action="{% url 'data_validate' %}" method="post" enctype="multipart/form-data">
+					{% csrf_token %}
+					<input type="submit" name="btn3" class="btn btn-outline-primary p-2 col-12" value="Validar Datos" />
+				</form>
+			</div>
+
+			<div class="p-2">
+				<form id="formP" action="{% url 'data_post' %}" method="post" enctype="multipart/form-data">
+					{% csrf_token %}
+					<input type="submit" name="btn4" class="btn btn-outline-primary p-2 col-12" value="Postear Datos" />
+				</form>
+			</div>
+
+		</div>
+
+	{% else %}
+
+		<div id="div_prin" class="col-auto m-5 p-3 container bg-light">
+
+			<div class="p-2">
+				<form id="formDP" action="{% url 'csv_download' %}" method="post" enctype="multipart/form-data">
+					{% csrf_token %}
+					<input type="submit" name="btn1" class="btn btn-outline-primary p-2 col-12" value="Descargar Plantilla" />
+				</form>
+			</div>
+
+			<div class="p-2">
+				<form id="formSA" action="{% url 'csv_upload' %}" method="post" enctype="multipart/form-data">
+					{% csrf_token %}
+					<input type="submit" name="btn2" class="btn btn-outline-primary p-2 col-12" value="Subir Plantilla" />
+				</form>
+			</div>
+
+		</div>
+
+	{% endif %}
+	
+
+{% endblock %}

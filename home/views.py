@@ -1,18 +1,14 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
 from django.template import Context, Template
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 
 import os
-import pathlib
-import pandas as pd
-import numpy as np
-
-import asyncio
 
 from openpyxl import load_workbook
+
+from re_sys.settings import BASE_DIR
 
 from plantillas.models import *
 from plantillas.views import *
@@ -20,11 +16,9 @@ from plantillas.views import *
 from datos.views import *
 from datos.models import *
 
-# Global var
-base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))+"/home"
-
 def su_test(user):
 	return user.is_superuser
+
 
 @login_required(login_url='/admin/')
 def home(request):
@@ -34,14 +28,15 @@ def home(request):
 		if request.user.is_authenticated:
 			if d.active == True:
 				messages.warning(request, "Tienes una plantilla precargada con informacion sin validar!")
-				return redirect("/subir_archivo/confirmar/")
+				return redirect("/csv_upload/confirm/", permanent=True)
 	else:
 		print("User is not logged in :(")
 
-	return render(request, '{}/templates/home.html'.format(base_dir), context={"message": messages})
+	return render(request, BASE_DIR+'/home/templates/home.html', context={"message": messages})
+
 
 @login_required(login_url='/admin/')
-def descargar_csv(request):
+def csv_download(request):
 
 	if request.method == 'POST':
 		
@@ -54,7 +49,7 @@ def descargar_csv(request):
 
 			messages.success(request, "Se ha descargado la plantilla con exito!")
 
-			return redirect('/')
+			return redirect('/', permanent=True)
 		
 	else:
 		return 0
@@ -69,10 +64,11 @@ def descargar_csv(request):
 		if i.currcode not in monedas:
 			monedas.append(i.currcode)
 	
-	return render(request, 'C:/Users/Leonor Fischer/Documents/re-sys-main/home/templates/descargar_plantilla.html', context={'edificios': edificios, 'monedas': monedas})
+	return render(request, BASE_DIR+'/home/templates/csv_download.html', context={'edificios': edificios, 'monedas': monedas})
+
 
 @login_required(login_url='/admin/')
-def subir_archivo(request):
+def csv_upload(request):
 
 	if request.method == 'POST':
 
@@ -82,15 +78,15 @@ def subir_archivo(request):
 			workbook = load_workbook(file)
 			uploadDataToDb(request, workbook)
 
-			return redirect('/subir_archivo/confirmar/')
+			return redirect('/csv_upload/confirm/', permanent=True)
 
 	else:
 		print("No has hecho ningun POST")
 
-	return render(request, 'C:/Users/Leonor Fischer/Documents/re-sys-main/home/templates/subir_archivo.html')
+	return render(request, BASE_DIR+'/home/templates/csv_upload.html')
 
 @login_required(login_url='/admin/')
-def subir_archivo_confirmar(request):
+def csv_upload_confirm(request):
 
 	filtro = TemplateDataUploadLog.objects.filter(username=request.user.username)
 	filtr = ""
@@ -105,37 +101,37 @@ def subir_archivo_confirmar(request):
 			if k not in columns:
 				columns.append(k)	
 
-	return render(request, 'C:/Users/Leonor Fischer/Documents/re-sys-main/home/templates/subir_archivo_confirmar.html', context={'columns': columns, 'data': data, 'filtr': filtr, 'name': 'plantilla'})
+	return render(request, BASE_DIR+'/home/templates/csv_upload_confirm.html', context={'columns': columns, 'data': data, 'filtr': filtr, 'name': 'plantilla'})
 
 @login_required(login_url='/admin/')
-def subir_archivo_confirmar_cc(request, bldgid):
+def csv_upload_confirm_cc(request, bldgid):
 
 	templateDataLog(1, request.user.username, bldgid, True, False)
 	templateDataUploadLog(2, request.user.username, "")
 
-	return redirect("/")
+	return redirect("/", permanent=True)
 
 @login_required(login_url='/admin/')
-def subir_archivo_confirmar_dc(request, bldgid):
+def csv_upload_confirm_dc(request, bldgid):
 
 	deleteData(bldgid)
 	templateDataUploadLog(2, request.user.username, "")
 
-	return redirect("/")
+	return redirect("/", permanent=True)
 
 
 @login_required(login_url='/admin/')
 @user_passes_test(su_test)
-def validar_datos(request):
+def data_validate(request):
 	
 	data = TemplateData.objects.all()
 	filtros = TemplateDataLog.objects.all()
 
-	return render(request, 'C:/Users/Leonor Fischer/Documents/re-sys-main/home/templates/validar_datos.html', context={'data': data, 'filtros': filtros})
+	return render(request, BASE_DIR+'/home/templates/data_validate.html', context={'data': data, 'filtros': filtros})
 
 @login_required(login_url='/admin/')
 @user_passes_test(su_test)
-def validar_datos_confirmar(request, id):
+def data_validate_confirm(request, id):
 
 	d = TemplateDataLog.objects.get(id=id)
 	if d.second_validation == True:
@@ -143,14 +139,13 @@ def validar_datos_confirmar(request, id):
 	else:
 		templateDataLog(2, id, True, "", "")
 
-	return HttpResponseRedirect("/validar_datos/")
-
+	return redirect("/data_validate/")
 
 
 @login_required(login_url='/admin/')
 @user_passes_test(su_test)
-def postear_datos(request):
+def data_post(request):
 	
 	data = TemplateDataLog.objects.all().order_by('created').values()
 
-	return render(request, 'C:/Users/Leonor Fischer/Documents/re-sys-main/home/templates/postear_datos.html', context={'data': data})
+	return render(request, BASE_DIR+'/home/templates/data_post.html', context={'data': data})
