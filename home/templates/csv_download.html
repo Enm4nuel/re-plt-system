@@ -1,7 +1,7 @@
 {% extends "index.html" %}
 {% load static %}
 
-{% block csschild %} <link type="text/css" rel="stylesheet" href="{% static 'css/stylesdescargarplantilla.css' %}" /> {% endblock%}
+{% block csschild %} <link type="text/css" rel="stylesheet" href="{% static 'css/csv_download.css' %}" /> {% endblock%}
 
 {% block title %} <title> Descargar Plantilla </title> {% endblock %}
 
@@ -9,51 +9,57 @@
 
 {% block content %}
 
-	<div id="div_prin" class="container d-flex justify-content-center">
+	<div class="col-6 m-5 p-3 container bg-light">
 
-		<form id="formGP" action="/descargar_csv/" method="post" enctype="multipart/form-data">
+		<form action="/csv_download/" method="post" enctype="multipart/form-data">
 			{% csrf_token %}
-		    <legend> Parametros de plantilla </legend>
+		    <legend class="p-2"> Parametros de plantilla </legend>
 
-		    <div class="row g-3">
+		    <div class="row g-3 p-2">
 
-			    <div class="col-auto ">
-			      <label for="edificio" class="form-label">Edificio</label>
-			      <select id="edificio" name="edificio" class="form-select">
-			      	<option selected> Selecciona el edificio... </option>
-			      	{% for edificio in edificios %}
-			      		<option value="{{edificio}}"> {{edificio}} </option>
-			      	{% endfor %}
-			      </select>
+			    <div class="col-auto my-2 mx-3">
+			      	<label for="edificio" class="form-label">Edificio</label>
+			      	<select id="edificio" name="edificio" class="form-select">
+			      		<option selected> Selecciona el edificio... </option>
+			      			{% for edificio in edificios %}
+			      				<option value="{{edificio}}"> {{edificio}} </option>
+			      			{% endfor %}
+			      	</select>
+			      	<div id="valid-edificio">
+			    	</div>
 			    </div>
 
-			    <div class="col-auto ">
-			      <label for="moneda" class="form-label">Moneda</label>
-			      <select id="moneda" name="moneda" class="form-select" disabled>
-			      	<option selected> Selecciona la moneda... </option>
-			      	{% for moneda in monedas %}
-			      		<option value="{{moneda}}"> {{moneda}} </option>
-			      	{% endfor %}
-			      </select>
-			    </div>
-
-			</div>
-
-			<div class="row g-3">
-
-			    <div class="col-auto ">
-			      <label for="batch" class="form-label">Id de Batch</label>
-			      <input id="batch" name="batch" type="number" class="form-control" placeholder="Numero de batch" disabled>
+			    <div class="col-auto my-2 mx-3">
+					<label for="moneda" class="form-label">Moneda</label>
+					<select id="moneda" name="moneda" class="form-select" disabled>
+						<option selected> Selecciona la moneda... </option>
+							{% for moneda in monedas %}
+								<option value="{{moneda}}"> {{moneda}} </option>
+							{% endfor %}
+					</select>
+					<div id="valid-moneda">
+					</div>
 			    </div>
 
 			</div>
 
-		    <button type="submit" id="btn_gen_plt" class="btn btn-outline-success mt-3" disabled> Generar plantilla </button>
+			<div class="row g-3 p-2">
+
+			    <div class="col-auto my-2 mx-3">
+					<label for="batch" class="form-label">Id de Batch</label>
+					<input id="batch" name="batch" type="number" maxlength=8 class="form-control" placeholder="Numero de batch" disabled>
+					<div id="valid-batch">
+					</div>
+			    </div>
+
+			</div>
+
+		    <input type="submit" id="btn_gen_plt" class="btn btn-outline-success my-3 p-2 mx-2" disabled value="Generar plantilla" />
 
 		</form>
 
 		{% block scripts %}
-			<script src="../static/js/descargar_plantilla.js"></script>
+			<script src="../static/js/csv_download.js"></script>
 		{% endblock %}
 	
 

@@ -3,6 +3,8 @@ from django.template import Context, Template
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
+from django.db import IntegrityError
+from http import HTTPStatus
 
 import os
 
@@ -38,21 +40,25 @@ def home(request):
 @login_required(login_url='/admin/')
 def csv_download(request):
 
-	if request.method == 'POST':
+	try:
+		if request.method == 'POST':
 		
-		if 'edificio' in request.POST:
-			building = request.POST.get('edificio')
-			coin = request.POST.get('moneda')
-			batch = request.POST.get('batch')
+			if 'edificio' in request.POST:
+				building = request.POST.get('edificio')
+				coin = request.POST.get('moneda')
+				batch = request.POST.get('batch')
 
-			loadData(building, coin, batch, request.user.username)
+				loadData(building, coin, batch, request.user.username)
 
-			messages.success(request, "Se ha descargado la plantilla con exito!")
+				messages.success(request, "Se ha descargado la plantilla con exito!")
 
-			return redirect('/', permanent=True)
-		
-	else:
-		return 0
+				return redirect('/', permanent=True)
+			else:
+				pass
+		else:
+			return 0
+	except IntegrityError as err:
+		return render(request, BASE_DIR+"/home/templates/handler_error.html", {"type": err.__type__, "message": err.__cause__, "detalles": "detalles"})
 
 	edificios = []
 	monedas = []
@@ -64,7 +70,7 @@ def csv_download(request):
 		if i.currcode not in monedas:
 			monedas.append(i.currcode)
 	
-	return render(request, BASE_DIR+'/home/templates/csv_download.html', context={'edificios': edificios, 'monedas': monedas})
+	return render(request, BASE_DIR+'/home/templates/csv_download.html', context={'edificios': edificios, 'monedas' :monedas})
 
 
 @login_required(login_url='/admin/')
@@ -149,3 +155,9 @@ def data_post(request):
 	data = TemplateDataLog.objects.all().order_by('created').values()
 
 	return render(request, BASE_DIR+'/home/templates/data_post.html', context={'data': data})
+
+
+
+# Vistas para manejo de errores
+def handler_404(request, exception):
+	return render(request, BASE_DIR+'/home/templates/handle_errors/404.html')
