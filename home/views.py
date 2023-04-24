@@ -30,7 +30,7 @@ def home(request):
 		if request.user.is_authenticated:
 			if d.active == True:
 				messages.warning(request, "Tienes una plantilla precargada con informacion sin validar!")
-				return redirect("/csv_upload/confirm/", permanent=True)
+				return redirect("/csv_upload/confirm/")
 	else:
 		print("User is not logged in :(")
 
@@ -102,10 +102,20 @@ def csv_upload_confirm(request):
 	data = TemplateData.objects.filter(bldgid__contains=filtr)
 	
 	columns = ["LEASID", "BLDGID", "SUITID", "OCCPNAME"]
+	totals = {}
+
+	# extraer columnas
 	for d in data:
 		for k, v in d.fields.items():
 			if k not in columns:
-				columns.append(k)	
+				columns.append(k)
+
+	# Extraer totales
+	for d in data:
+		for k in d.fields:
+			totals[k] = sum(float(d.fields[k]))
+
+	print(totals)
 
 	return render(request, BASE_DIR+'/home/templates/csv_upload_confirm.html', context={'columns': columns, 'data': data, 'filtr': filtr, 'name': 'plantilla'})
 

@@ -53,8 +53,14 @@ function habilitar()
 function validationData()
 {
 	// mensaje como respuesta al validar
-	valid = "<i class='bi bi-check-lg text-success h-5'> </i>"
-	invalid = "<i class='bi bi-x-lg text-danger h-5'> </i>"
+	valid = "<i class='bi bi-check-lg text-success h-5'> </i>";
+	invalid = "<i class='bi bi-x-lg text-danger h-5'> </i>";
+
+	// mensaje como respuesta extra al validar id de batch
+	incomplete_id = "<p>Numero de batch incompleto. </p>";
+	empty_id = "<p>Numero de batch vacio. </p>";
+	veryLong_id = "<p>Numero de batch muy largo. </p>";
+	correct_id = "<p>Numero de batch correcto. </p>"
 
 	// extraer la informacion de data de cada input
 	edificio = document.getElementById('edificio').value;
@@ -86,16 +92,20 @@ function validationData()
 	{
 		if (batch.length == 8)
 		{
-			document.getElementById("valid-batch").innerHTML = valid;
+			document.getElementById("valid-batch").innerHTML = valid+correct_id;
+		}
+		else if (batch.length > 8)
+		{
+			document.getElementById("valid-batch").innerHTML = invalid+veryLong_id;
 		}
 		else
 		{
-			document.getElementById("valid-batch").innerHTML = invalid;
+			document.getElementById("valid-batch").innerHTML = invalid+incomplete_id;
 		}
 	}
 	else
 	{
-		document.getElementById("valid-batch").innerHTML = invalid;
+		document.getElementById("valid-batch").innerHTML = invalid+empty_id;
 	}
 }
 
@@ -112,4 +122,4 @@ document.getElementById('batch').addEventListener('input', validationData);
 // Al iniciar la vista
 document.getElementById("valid-edificio").innerHTML = "<i class='bi bi-x-lg text-danger h-5'> </i>";
 document.getElementById("valid-moneda").innerHTML = "<i class='bi bi-x-lg text-danger h-5'> </i>";
-document.getElementById("valid-batch").innerHTML = "<i class='bi bi-x-lg text-danger h-5'> </i>";
+document.getElementById("valid-batch").innerHTML = "<i class='bi bi-x-lg text-danger h-5'> </i>"+"<p>Numero de batch vacio. </p>";
