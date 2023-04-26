@@ -99,25 +99,34 @@ def csv_upload_confirm(request):
 	for f in filtro:
 		filtr = f.bldgid
 
+	# para nombrar el caption o legend de la tabla
+	name = "Plantilla_"+filtr
+
 	data = TemplateData.objects.filter(bldgid__contains=filtr)
 	
 	columns = ["LEASID", "BLDGID", "SUITID", "OCCPNAME"]
-	totals = {}
+	totals = [100, 100, 100]
 
-	# extraer columnas
+	# Extraer columnas
 	for d in data:
 		for k, v in d.fields.items():
 			if k not in columns:
 				columns.append(k)
 
 	# Extraer totales
-	for d in data:
-		for k in d.fields:
-			totals[k] = sum(float(d.fields[k]))
+	#for d in data:
+		#k = d.fields.keys()
+		#v = d.fields.values()
+		#print(k)
+		#print(v)
+		#for i in range(len(k)):
+			#totals[k[i]] = v[i]
+		#for k, v in d.fields.items():
+			#totals[k] = (totals.get(k) + v)
 
-	print(totals)
+	#print(totals)
 
-	return render(request, BASE_DIR+'/home/templates/csv_upload_confirm.html', context={'columns': columns, 'data': data, 'filtr': filtr, 'name': 'plantilla'})
+	return render(request, BASE_DIR+'/home/templates/csv_upload_confirm.html', context={'columns': columns, 'data': data, 'totals': totals, 'filtr': filtr, 'name': name})
 
 @login_required(login_url='/admin/')
 def csv_upload_confirm_cc(request, bldgid):

@@ -1,51 +1,13 @@
+{% extends "index.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
 
-	<link type="text/css" rel="stylesheet" href="{% static 'css/stylessubirarchivo.css' %}" />
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
-	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title> Confirmar Cambios </title>
+{% block csschild %} <link type="text/css" rel="stylesheet" href="{% static 'css/csv_upload_confirm.css' %}" /> {% endblock%}
 
-</head>
-<body>
+{% block title %} <title> Confirmar Cambios </title> {% endblock %}
 
-	<header>
-		<nav class="navbar navbar-expand-lg navbar-light" style="background-color: rgba(0, 0, 0, 0.05);">
+{% block titlepage %} Confirmar Cambios {% endblock %}
 
-		  	<div class="container-fluid">
-		  		<div class="col-4">
-		  			<a href="/" ><img height="90" width="220" src="{% static 'img/bmlogo-r.png' %}" class="rounded"></a>
-		  		</div>
-		  		<div class="col-4 container text-center">
-		  			<h1 class="navbar-brand float-start" href="/home/" style="text-align: center; font-size: 35px;" > Confirmar Cambios </h1>
-		  		</div>
-		  		
-		  		<div class="col-2 p-2">
-	  			    {% if user.is_authenticated %}
-	  			    	<div class="btn-group dropstart">
-						  <span class="dropdown-toggle text-reset fw-bold" data-bs-toggle="dropdown" aria-expanded="false">
-						    <i class="bi bi-gear-fill"></i> {{ user.get_username }}
-						  </span>
-						  <ul class="dropdown-menu">
-						  	{% if user.is_superuser %}
-						    	<li><a class="dropdown-item" href="/plantillas/modificar_plantillas/"> Modificar plantillas </a></li>
-						    	<li><a class="dropdown-item" href="/admin/"> Administracion </a></li>
-						    	<li><hr class="dropdown-divider"></li>
-						    {% endif %}
-						    <li><a class="dropdown-item" href="/admin/logout/"> Salir </a></li>
-						  </ul>
-						</div>
-				   	{% endif %}
-		        </div>
-	    	</div>
-
-		</nav>
-	</header>
+{% block notification %}
 
 	{% for message in messages %}
 		<div class="alert alert-{{message.tags}} alert-dismissible m-2" id="msg" role="alert">
@@ -59,6 +21,10 @@
 		</div>
 	{% endfor %}
 
+{% endblock %}
+
+{% block contenTable %}
+	
 	<div class="p-2 mt-2 ml-2">
 		<row>
 			<a id="botonActualizar" href="javascript:confirmar_cambios('{{filtr}}')" data-bs-toggle="tooltip" data-bs-placement="top" title="Guardar cambios" type="button" class="btn btn-success col-2" value="Guardar Cambios"> 
@@ -71,7 +37,6 @@
 			</a>
 		</row>
 	</div>
-	
 
 	<div class="m-3 mb-5 h-2 table-responsive">
 		<table class="table table-striped caption-top">
@@ -97,37 +62,37 @@
 				{% endfor %}
 			</tbody>
 			<tfoot>
+				<tr>
+					<td> - </td>
+					<td> - </td>
+					<td> - </td>
+					<td> - </td>
+					{% for t in totals %}
+						<td> {{t}} </td>
+					{% endfor %}
+				</tr>
 			</tfoot>
 		</table>
 	</div>
-
-	<!-- Footer -->
-	<div class="align-items-end">
-		<footer class="text-center text-lg-start bg-light text-muted">
-		  <div class="text-center p-2" style="background-color: rgba(0, 0, 0, 0.05);">
-		    © 2023,
-		    <a class="text-reset fw-bold"> Todos los derechos reservados</a>
-		  </div>
-		</footer>
-	</div>
-	<!-- Footer -->
-
-	<script>
-      	function confirmar_cambios(filtro){
-	        var confirmar = confirm('Estas a punto de confirmar los cambios realizados...\nEstas seguro de esto?');
-	        if (confirmar == true)
-	        {
-	        	location.href ="cc/"+filtro;
-	        }
-      	}
-      	function deshacer_cambios(filtro){
-      		var confirmar = confirm('Deseas deshacer los cambios?');
-      		if (confirmar == true)
-      		{
-      			location.href = "dc/"+filtro;
-      		}
-      	}
-    </script>
 	
-</body>
-</html>
+{% endblock %}
+
+{% block scripts %}
+		<script>
+	      	function confirmar_cambios(filtro){
+		        var confirmar = confirm('Estas a punto de confirmar los cambios realizados...\nEstas seguro de esto?');
+		        if (confirmar == true)
+		        {
+		        	location.href = "cc/"+filtro;
+		        }
+	      	}
+	      	function deshacer_cambios(filtro){
+	      		var confirmar = confirm('Deseas deshacer los cambios?');
+	      		if (confirmar == true)
+	      		{
+	      			location.href = "/csv_upload/confirm/dc/"+filtro;
+	      		}
+	      	}
+	    </script>
+	{% endblock %}
+	

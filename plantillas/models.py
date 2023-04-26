@@ -53,7 +53,7 @@ class TemplateLog(models.Model):
 
 
 class TemplateMonthlyCfg(models.Model):
-	rate = models.DecimalField(max_digits=5, decimal_places=2)
+	rate = models.DecimalField(max_digits=9, decimal_places=6)
 	date = models.DateField()
 
 	def __str__(self):
