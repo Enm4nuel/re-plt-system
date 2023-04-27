@@ -47,8 +47,9 @@ def csv_download(request):
 				building = request.POST.get('edificio')
 				coin = request.POST.get('moneda')
 				batch = request.POST.get('batch')
+				rate = request.POST.get('rate')
 
-				loadData(building, coin, batch, request.user.username)
+				loadData(building, coin, batch, rate, request.user.username)
 
 				messages.success(request, "Se ha descargado la plantilla con exito!")
 

@@ -3,9 +3,10 @@ function habilitar()
 	edificio = document.getElementById('edificio').value;
 	moneda = document.getElementById('moneda').value;
 	batch = document.getElementById('batch').value;
+	rate = document.getElementById('rate').value;
 	val = 0;
-	console.log(batch)
 
+	// Evaluar si el edificio ya se selecciono
 	if (edificio != "Selecciona el edificio...")
 	{
 		val++;
@@ -20,6 +21,7 @@ function habilitar()
 		
 	}
 
+	// Evaluar si la moneda ya se seleccino
 	if (moneda != "Selecciona la moneda...")
 	{
 		val++;
@@ -31,16 +33,36 @@ function habilitar()
 		document.getElementById('batch').disabled = true;
 	}
 
+	// Evaluar si el numero de batch esta correcto y registrado
 	if (batch != "")
 	{
 		if (batch.length == 8)
 		{
 			val++;
+			document.getElementById('rate').disabled = false;
 		}
+		else
+		{
+			document.getElementById('rate').disabled = true;
+		}
+	}
+	else
+	{
+		document.getElementById('rate').disabled = true;
+	}
+
+	// Evaluar si la taza se registro
+	if (rate != null)
+	{
+		val++;
+	}
+	else
+	{
+		document.getElementById('rate').disabled = true;	
 	}
 	
 
-	if (val >= 3)
+	if (val >= 4)
 	{
 		document.getElementById("btn_gen_plt").disabled = false;
 	}
@@ -66,6 +88,7 @@ function validationData()
 	edificio = document.getElementById('edificio').value;
 	moneda = document.getElementById('moneda').value;
 	batch = document.getElementById('batch').value;
+	rate = document.getElementById('rate').value;
 
 	// Validacion - Edificio
 	if (edificio != "Selecciona el edificio...")
@@ -107,19 +130,32 @@ function validationData()
 	{
 		document.getElementById("valid-batch").innerHTML = invalid+empty_id;
 	}
+
+	// Validacion - Rate
+	if (rate != "")
+	{
+		document.getElementById("valid-rate").innerHTML = valid;
+	}
+	else
+	{
+		document.getElementById("valid-rate").innerHTML = invalid;
+	}
 }
 
 // funcion habilitar
 document.getElementById('edificio').addEventListener('change', habilitar);
 document.getElementById('moneda').addEventListener('change', habilitar);
 document.getElementById('batch').addEventListener('input', habilitar);
+document.getElementById('rate').addEventListener('input', habilitar);
 
 // funcion validacion
 document.getElementById('edificio').addEventListener('change', validationData);
 document.getElementById('moneda').addEventListener('change', validationData);
 document.getElementById('batch').addEventListener('input', validationData);
+document.getElementById('rate').addEventListener('input', validationData);
 
 // Al iniciar la vista
 document.getElementById("valid-edificio").innerHTML = "<i class='bi bi-x-lg text-danger h-5'> </i>";
 document.getElementById("valid-moneda").innerHTML = "<i class='bi bi-x-lg text-danger h-5'> </i>";
 document.getElementById("valid-batch").innerHTML = "<i class='bi bi-x-lg text-danger h-5'> </i>"+"<p>Numero de batch vacio. </p>";
+document.getElementById("valid-rate").innerHTML = "<i class='bi bi-x-lg text-danger h-5'> </i>";

@@ -1,79 +1,74 @@
 {% extends "index.html" %}
 {% load static %}
 
-{% block csschild %} <link type="text/css" rel="stylesheet" href="{% static 'css/home.css' %}" /> {% endblock%}
+{% block csschild %}
+<link href="{% static 'css/home.css' %}" rel="stylesheet" type="text/css"/>
+{% endblock%}
 
-{% block title %} <title> Sistema de Plantillas </title> {% endblock %}
+{% block title %}
+<title>
+    Sistema de Plantillas
+</title>
+{% endblock %}
 
 {% block titlepage %} Sistema de Plantillas {% endblock %}
 
 {% block notification %}
 
 	{% for message in messages %}
-		<div class="alert alert-{{message.tags}} alert-dismissible m-2" id="msg" role="alert">
-			{{message}}
-			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-		</div>
-	{% endfor %}
+<div class="alert alert-{{message.tags}} alert-dismissible m-2" id="msg" role="alert">
+    {{message}}
+    <button aria-label="Close" class="btn-close" data-bs-dismiss="alert" type="button">
+    </button>
+</div>
+{% endfor %}
 
 {% endblock %}
 
 {% block content %}
 
 	{% if user.is_superuser %}
-	
-		<div id="div_prin" class="col-4 m-5 p-3 container bg-light">
-
-			<div class="p-2">
-				<form id="formDP" action="{% url 'csv_download' %}" method="post" enctype="multipart/form-data">
-					{% csrf_token %}
-					<input type="submit" name="btn1" class="btn btn-outline-primary p-2 col-12" value="Descargar Plantilla" />
-				</form>
-			</div>
-
-			<div class="p-2">
-				<form id="formSA" action="{% url 'csv_upload' %}" method="post" enctype="multipart/form-data">
-					{% csrf_token %}
-					<input type="submit" name="btn2" class="btn btn-outline-primary p-2 col-12" value="Subir Plantilla" />
-				</form>
-			</div>
-			
-			<div class="p-2">
-				<form id="formV" action="{% url 'data_validate' %}" method="post" enctype="multipart/form-data">
-					{% csrf_token %}
-					<input type="submit" name="btn3" class="btn btn-outline-primary p-2 col-12" value="Validar Datos" />
-				</form>
-			</div>
-
-			<div class="p-2">
-				<form id="formP" action="{% url 'data_post' %}" method="post" enctype="multipart/form-data">
-					{% csrf_token %}
-					<input type="submit" name="btn4" class="btn btn-outline-primary p-2 col-12" value="Postear Datos" />
-				</form>
-			</div>
-
-		</div>
-
-	{% else %}
-
-		<div id="div_prin" class="col-auto m-5 p-3 container bg-light">
-
-			<div class="p-2">
-				<form id="formDP" action="{% url 'csv_download' %}" method="post" enctype="multipart/form-data">
-					{% csrf_token %}
-					<input type="submit" name="btn1" class="btn btn-outline-primary p-2 col-12" value="Descargar Plantilla" />
-				</form>
-			</div>
-
-			<div class="p-2">
-				<form id="formSA" action="{% url 'csv_upload' %}" method="post" enctype="multipart/form-data">
-					{% csrf_token %}
-					<input type="submit" name="btn2" class="btn btn-outline-primary p-2 col-12" value="Subir Plantilla" />
-				</form>
-			</div>
-
-		</div>
-
-	{% endif %}
+<div class="col-4 m-5 p-3 container bg-light" id="div_prin">
+    <div class="p-2">
+        <form action="{% url 'csv_download' %}" enctype="multipart/form-data" id="formDP" method="post">
+            {% csrf_token %}
+            <input class="btn btn-outline-primary p-2 col-12" name="btn1" type="submit" value="Descargar Plantilla"/>
+        </form>
+    </div>
+    <div class="p-2">
+        <form action="{% url 'csv_upload' %}" enctype="multipart/form-data" id="formSA" method="post">
+            {% csrf_token %}
+            <input class="btn btn-outline-primary p-2 col-12" name="btn2" type="submit" value="Subir Plantilla"/>
+        </form>
+    </div>
+    <div class="p-2">
+        <form action="{% url 'data_validate' %}" enctype="multipart/form-data" id="formV" method="post">
+            {% csrf_token %}
+            <input class="btn btn-outline-primary p-2 col-12" name="btn3" type="submit" value="Validar Datos"/>
+        </form>
+    </div>
+    <div class="p-2">
+        <form action="{% url 'data_post' %}" enctype="multipart/form-data" id="formP" method="post">
+            {% csrf_token %}
+            <input class="btn btn-outline-primary p-2 col-12" name="btn4" type="submit" value="Postear Datos"/>
+        </form>
+    </div>
+</div>
+{% else %}
+<div class="col-auto m-5 p-3 container bg-light" id="div_prin">
+    <div class="p-2">
+        <form action="{% url 'csv_download' %}" enctype="multipart/form-data" id="formDP" method="post">
+            {% csrf_token %}
+            <input class="btn btn-outline-primary p-2 col-12" name="btn1" type="submit" value="Descargar Plantilla"/>
+        </form>
+    </div>
+    <div class="p-2">
+        <form action="{% url 'csv_upload' %}" enctype="multipart/form-data" id="formSA" method="post">
+            {% csrf_token %}
+            <input class="btn btn-outline-primary p-2 col-12" name="btn2" type="submit" value="Subir Plantilla"/>
+        </form>
+    </div>
+</div>
+{% endif %}
 	
 {% endblock %}

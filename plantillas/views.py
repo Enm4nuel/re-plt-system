@@ -16,7 +16,7 @@ username = 'Data_Editor'
 password = 'jr03124300'
 # ENCRYPT defaults to yes starting in ODBC Driver 18. It's good to always specify ENCRYPT=yes on the client side to avoid MITM attacks.
 
-def loadData(building, coin, batch, user):
+def loadData(building, coin, batch, rate, user):
 
 	cnxn = pyodbc.connect('DRIVER={ODBC Driver 18 for SQL Server};SERVER='+server+';DATABASE='+database+';ENCRYPT=no;UID='+username+';PWD='+ password)
 	cursor = cnxn.cursor()
