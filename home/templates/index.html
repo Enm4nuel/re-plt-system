@@ -35,7 +35,7 @@
 			  	<div class="container-md">
 
 			  		<div class="col-auto">
-			  			<a class="navbar-brand" href="/" >
+			  			<a class="navbar-brand" href="javascript:goToHome()">
 			  				<img height="90" width="220" src="{% static 'img/bmlogo-r.png' %}" class="rounded">
 			  			</a>
 			  		</div>
@@ -104,7 +104,16 @@
 		    	<a class="text-light fw-bold"> Todos los derechos reservados</a>
 		  	</div>
 		</footer>
-		<!-- Footer -->	
+		<!-- Footer -->
+
+		<!-- Scripts -->
+		<script>
+			function goToHome() 
+			{
+			    location.replace("/");
+			}
+		</script>
+		<!-- Scripts -->
 
 		{% block scripts %}
 		{% endblock %}

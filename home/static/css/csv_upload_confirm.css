@@ -9,13 +9,3 @@
       0.3em 0.3em 1em rgba(65, 105, 225,0.7);
   width: 45%;
 }
-
-html {
-	min-height: 100%;
-	position: relative;
-}
-
-body {
-	margin-bottom: 40px;
-	margin: 0;
-}

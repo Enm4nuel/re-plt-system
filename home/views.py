@@ -53,7 +53,9 @@ def csv_download(request):
 
 				messages.success(request, "Se ha descargado la plantilla con exito!")
 
-				return redirect('/', permanent=True)
+				response = redirect("/")
+				response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+				return response
 			else:
 				pass
 		else:
@@ -83,9 +85,18 @@ def csv_upload(request):
 
 			file = request.FILES['file']
 			workbook = load_workbook(file)
-			uploadDataToDb(request, workbook)
+			rtn = uploadDataToDb(request, workbook)
 
-			return redirect('/csv_upload/confirm/', permanent=True)
+			if rtn == False:
+				print("Se produjo un error")
+				messages.error(request, "Se ha producido un error al intentar cargar la plantilla!")
+				response = redirect('/')
+				response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+				return response
+			else:
+				response = redirect('/csv_upload/confirm/')
+				response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+				return response
 
 	else:
 		print("No has hecho ningun POST")
@@ -98,7 +109,13 @@ def csv_upload_confirm(request):
 	filtro = TemplateDataUploadLog.objects.filter(username=request.user.username)
 	filtr = ""
 	for f in filtro:
-		filtr = f.bldgid
+		try:
+			filtr = f.bldgid
+		except:
+			print("No se pudo extraer la informacion")
+			response = redirect('/csv_upload/')
+			response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+			return response
 
 	# para nombrar el caption o legend de la tabla
 	name = "Plantilla_"+filtr
@@ -135,7 +152,9 @@ def csv_upload_confirm_cc(request, bldgid):
 	templateDataLog(1, request.user.username, bldgid, True, False)
 	templateDataUploadLog(2, request.user.username, "")
 
-	return redirect("/", permanent=True)
+	response = redirect("/")
+	response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+	return response
 
 @login_required(login_url='/admin/')
 def csv_upload_confirm_dc(request, bldgid):
@@ -143,7 +162,9 @@ def csv_upload_confirm_dc(request, bldgid):
 	deleteData(bldgid)
 	templateDataUploadLog(2, request.user.username, "")
 
-	return redirect("/", permanent=True)
+	response = redirect("/")
+	response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+	return response
 
 
 @login_required(login_url='/admin/')
