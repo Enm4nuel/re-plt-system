@@ -4,33 +4,34 @@ function habilitar()
 	moneda = document.getElementById('moneda').value;
 	batch = document.getElementById('batch').value;
 	rate = document.getElementById('rate').value;
-	val = 0;
 
 	// Evaluar si el edificio ya se selecciono
 	if (edificio != "Selecciona el edificio...")
 	{
-		val++;
 		document.getElementById('moneda').disabled = false;
 	}
 	else
 	{
 		document.getElementById('moneda').disabled = true;
 		document.getElementById('moneda').value = "Selecciona la moneda...";
-		document.getElementById('batch').value = "";
-		document.getElementById('batch').disabled = true;
+		//document.getElementById('batch').value = "";
+		//document.getElementById('batch').disabled = true;
+		//document.getElementById('rate').value = "";
+		//document.getElementById('rate').disabled = true;
 		
 	}
 
 	// Evaluar si la moneda ya se seleccino
 	if (moneda != "Selecciona la moneda...")
 	{
-		val++;
 		document.getElementById('batch').disabled = false;
 	}
 	else
 	{
 		document.getElementById('batch').value = "";
 		document.getElementById('batch').disabled = true;
+		//document.getElementById('rate').value = "";
+		//document.getElementById('rate').disabled = true;
 	}
 
 	// Evaluar si el numero de batch esta correcto y registrado
@@ -38,38 +39,32 @@ function habilitar()
 	{
 		if (batch.length == 8)
 		{
-			val++;
 			document.getElementById('rate').disabled = false;
 		}
 		else
 		{
+			document.getElementById('rate').value = "";
 			document.getElementById('rate').disabled = true;
 		}
 	}
 	else
 	{
+		document.getElementById('rate').value = "";
 		document.getElementById('rate').disabled = true;
 	}
 
 	// Evaluar si la taza se registro
-	if (rate != null)
+	if (rate != "")
 	{
-		val++;
-	}
-	else
-	{
-		document.getElementById('rate').disabled = true;	
-	}
-	
-
-	if (val >= 4)
-	{
+		//val++;
 		document.getElementById("btn_gen_plt").disabled = false;
 	}
 	else
 	{
 		document.getElementById("btn_gen_plt").disabled = true;
+		//val--;	
 	}
+	
 }
 
 function validationData()

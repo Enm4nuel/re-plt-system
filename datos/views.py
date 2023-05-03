@@ -42,6 +42,13 @@ def deleteData(bldgid):
 	except:
 		print("paso algo malo")
 
+def deleteDataLog(bldgid):
+	# Eliminar data previamente subida a la db
+	try:
+		TemplateDataLog.objects.filter(bldgid__contains=bldgid).delete()
+	except:
+		print("paso algo malo")
+
 
 def getRate():
 
@@ -55,9 +62,12 @@ def uploadDataToDb(request, workbook):
 	# Accedo a los datos de la hoja activa o en uso del archivo excel
 	sheet = workbook.active
 
+	# Evaluar si la plantilla es correcta
+
+
 	# Verificar si existe la data y eliminar en caso de que si
 	for row in sheet.iter_rows(min_row=2):
-		if TemplateData.objects.filter(bldgid__contains=row[2].value).exists():
+		if TemplateData.objects.filter(bldgid__contains=row[2].value):
 			TemplateData.objects.filter(bldgid=row[2].value).delete()
 			print("listo")
 		break
@@ -93,6 +103,7 @@ def uploadDataToDb(request, workbook):
 	
 	if filtr !="":
 		templateDataUploadLog(1, request.user.username, filtr)
+		deleteDataLog(filtr)
 
 	return True
 

@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.template import Context, Template
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.views.decorators.cache import never_cache
 from django.contrib import messages
 from django.db import IntegrityError
 from http import HTTPStatus
@@ -95,7 +96,7 @@ def csv_upload(request):
 				return response
 			else:
 				response = redirect('/csv_upload/confirm/')
-				response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+				response['Cache-Control'] = 'no-cache'
 				return response
 
 	else:
@@ -123,26 +124,17 @@ def csv_upload_confirm(request):
 	data = TemplateData.objects.filter(bldgid__contains=filtr)
 	
 	columns = ["LEASID", "BLDGID", "SUITID", "OCCPNAME"]
-	totals = [100, 100, 100]
+	totals = {}
 
-	# Extraer columnas
+	c = len(data)
+	rate = getRate()
+
+	# Extraer columnas y totales por columna
 	for d in data:
 		for k, v in d.fields.items():
 			if k not in columns:
 				columns.append(k)
-
-	# Extraer totales
-	#for d in data:
-		#k = d.fields.keys()
-		#v = d.fields.values()
-		#print(k)
-		#print(v)
-		#for i in range(len(k)):
-			#totals[k[i]] = v[i]
-		#for k, v in d.fields.items():
-			#totals[k] = (totals.get(k) + v)
-
-	#print(totals)
+				totals["{}".format(k)] = v*c
 
 	return render(request, BASE_DIR+'/home/templates/csv_upload_confirm.html', context={'columns': columns, 'data': data, 'totals': totals, 'filtr': filtr, 'name': name})
 

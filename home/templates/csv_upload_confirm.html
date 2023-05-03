@@ -67,8 +67,8 @@
 					<td> - </td>
 					<td> - </td>
 					<td> - </td>
-					{% for t in totals %}
-						<td> {{t}} </td>
+					{% for k, v in totals.items %}
+						<th> {{v}} </th>
 					{% endfor %}
 				</tr>
 			</tfoot>
@@ -78,21 +78,21 @@
 {% endblock %}
 
 {% block scripts %}
-		<script>
-	      	function confirmar_cambios(filtro){
-		        var confirmar = confirm('Estas a punto de confirmar los cambios realizados...\nEstas seguro de esto?');
-		        if (confirmar == true)
-		        {
-		        	location.href = "cc/"+filtro;
-		        }
-	      	}
-	      	function deshacer_cambios(filtro){
-	      		var confirmar = confirm('Deseas deshacer los cambios?');
-	      		if (confirmar == true)
-	      		{
-	      			location.href = "/csv_upload/confirm/dc/"+filtro;
-	      		}
-	      	}
-	    </script>
-	{% endblock %}
+	<script>
+      	function confirmar_cambios(filtro){
+	        var confirmar = confirm('Estas a punto de confirmar los cambios realizados...\nEstas seguro de esto?');
+	        if (confirmar == true)
+	        {
+	        	location.href = "cc/"+filtro;
+	        }
+      	}
+      	function deshacer_cambios(filtro){
+      		var confirmar = confirm('Deseas deshacer los cambios?');
+      		if (confirmar == true)
+      		{
+      			location.href = "/csv_upload/confirm/dc/"+filtro;
+      		}
+      	}
+    </script>
+{% endblock %}
 	
