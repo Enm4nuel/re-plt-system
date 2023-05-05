@@ -11,59 +11,74 @@
 
 	<div class="col-6 m-5 p-3 container bg-light">
 
-		<form action="/csv_download/" method="post" enctype="multipart/form-data">
+		<form class="row g-3 p-2 needs-validation" novalidate>
 			{% csrf_token %}
+
 		    <legend class="p-2"> Parametros de plantilla </legend>
 
-		    <div class="row g-3 p-2">
-
-			    <div class="col-auto my-2 mx-3">
-			      	<label for="edificio" class="form-label">Edificio</label>
-			      	<select id="edificio" name="edificio" class="form-select">
-			      		<option selected> Selecciona el edificio... </option>
-			      			{% for edificio in edificios %}
-			      				<option value="{{edificio}}"> {{edificio}} </option>
-			      			{% endfor %}
-			      	</select>
-			      	<div id="valid-edificio">
-			    	</div>
+	    	<!-- Edificio -->
+		    <div class="col-auto my-2 mx-3">
+		      	<label for="edificio" class="form-label">Edificio</label>
+		      	<select id="edificio" name="edificio" class="form-select" required>
+		      		<option selected disabled> Selecciona el edificio... </option>
+		      			{% for edificio in edificios %}
+		      				<option value="{{edificio}}"> {{edificio}} </option>
+		      			{% endfor %}
+		      	</select>
+		      	<div class="valid-feedback">
+		    		<i class='bi bi-check-lg text-success h-5'> </i>
 			    </div>
-
-			    <div class="col-auto my-2 mx-3">
-					<label for="moneda" class="form-label">Moneda</label>
-					<select id="moneda" name="moneda" class="form-select" disabled>
-						<option selected> Selecciona la moneda... </option>
-							{% for moneda in monedas %}
-								<option value="{{moneda}}"> {{moneda}} </option>
-							{% endfor %}
-					</select>
-					<div id="valid-moneda">
-					</div>
+			    <div class="invalid-feedback">
+			    	<i class='bi bi-x-lg text-danger h-5'> </i>
 			    </div>
+		    </div>
 
-			</div>
-
-			<div class="row g-3 p-2">
-
-			    <div class="col-auto my-2 mx-3">
-					<label for="batch" class="form-label">Id de Batch</label>
-					<input id="batch" name="batch" type="number" maxlength="8" class="form-control" placeholder="Numero de batch" disabled>
-					<div id="valid-batch" class="row">
-					</div>
+		    <!-- Moneda -->
+		    <div class="col-auto my-2 mx-3">
+				<label for="moneda" class="form-label">Moneda</label>
+				<select id="moneda" name="moneda" class="form-select" required>
+					<option selected disabled> Selecciona la moneda... </option>
+						{% for moneda in monedas %}
+							<option value="{{moneda}}"> {{moneda}} </option>
+						{% endfor %}
+				</select>
+				<div class="valid-feedback">
+		    		<i class='bi bi-check-lg text-success h-5'> </i>
 			    </div>
-
-			    <div class="col-auto my-2 mx-3">
-					<label for="rate" class="form-label">Taza</label>
-					<input id="rate" name="rate" type="text" class="form-control" placeholder="Escribe la Taza..." disabled>
-					<div id="valid-rate" class="row">
-					</div>
+			    <div class="invalid-feedback">
+			    	<i class='bi bi-x-lg text-danger h-5'> </i>
 			    </div>
+		    </div>
 
-			</div>
+		    <!-- batch -->
+		    <div class="col-auto my-2 mx-3">
+				<label for="batch" class="form-label">Id de Batch</label>
+				<input id="batch" name="batch" type="number" maxlength="8" class="form-control" required>
+				<div class="valid-feedback">
+		    		<i class='bi bi-check-lg text-success h-5'> </i>
+			    </div>
+			    <div class="invalid-feedback">
+			    	<i class='bi bi-x-lg text-danger h-5'> </i>
+			    </div>
+		    </div>
 
-		    <input type="submit" id="btn_gen_plt" class="btn btn-outline-success my-3 p-2 mx-2" disabled value="Generar plantilla" />
+		    <!-- taza -->
+		    <div class="col-auto my-2 mx-3">
+				<label for="rate" class="form-label">Taza</label>
+				<input id="rate" name="rate" type="text" class="form-control" required>
+				<div class="valid-feedback">
+		    		<i class='bi bi-check-lg text-success h-5'> </i>
+			    </div>
+			    <div class="invalid-feedback">
+			    	<i class='bi bi-x-lg text-danger h-5'> </i>
+			    </div>
+		    </div>
+
+		    <button type="submit" class="btn btn-outline-success my-3 p-2 mx-2">Generar plantilla</buton>
 
 		</form>
+
+	</div>
 
 {% endblock %}
 

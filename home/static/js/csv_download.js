@@ -1,3 +1,4 @@
+/*
 function habilitar() 
 {
 	edificio = document.getElementById('edificio').value;
@@ -154,3 +155,25 @@ document.getElementById("valid-edificio").innerHTML = "<i class='bi bi-x-lg text
 document.getElementById("valid-moneda").innerHTML = "<i class='bi bi-x-lg text-danger h-5'> </i>";
 document.getElementById("valid-batch").innerHTML = "<i class='bi bi-x-lg text-danger h-5'> </i>"+"<p>Numero de batch vacio. </p>";
 document.getElementById("valid-rate").innerHTML = "<i class='bi bi-x-lg text-danger h-5'> </i>";
+*/
+
+// Example starter JavaScript for disabling form submissions if there are invalid fields
+(function () {
+  'use strict'
+
+  // Fetch all the forms we want to apply custom Bootstrap validation styles to
+  var forms = document.querySelectorAll('.needs-validation')
+
+  // Loop over them and prevent submission
+  Array.prototype.slice.call(forms)
+    .forEach(function (form) {
+      form.addEventListener('submit', function (event) {
+        if (!form.checkValidity()) {
+          event.preventDefault()
+          event.stopPropagation()
+        }
+
+        form.classList.add('was-validated')
+      }, false)
+    })
+})()

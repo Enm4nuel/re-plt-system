@@ -91,12 +91,14 @@ def uploadDataToDb(request, workbook):
 	for row in sheet.iter_rows(min_row=2):
 		data = {}
 		for c in range(limit+1,len(columns)):
-			data[str(columns[c])] = float(row[c].value)
+			if (float(row[c].value) != 0):
+				data[str(columns[c])] = float(row[c].value)
 		# Evaluar si la informacion que se esta suministrando es correcta
 		if Template.objects.filter(bldgid__contains=row[2].value).exists():
-			templateData(1, row[1].value, row[2].value, row[3].value, row[4].value, data)
-			print("Se han agregado los datos nuevos a ", row[2].value)
-			filtr = row[2].value
+			if data:
+				templateData(1, row[1].value, row[2].value, row[3].value, row[4].value, data)
+				print("Se han agregado los datos nuevos a ", row[2].value)
+				filtr = row[2].value
 		else:
 			print("La informacion suministrada no es correcta")
 			return False

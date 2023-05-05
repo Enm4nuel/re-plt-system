@@ -129,12 +129,19 @@ def csv_upload_confirm(request):
 	c = len(data)
 	rate = getRate()
 
-	# Extraer columnas y totales por columna
+	# Extraer columnas
 	for d in data:
 		for k, v in d.fields.items():
 			if k not in columns:
 				columns.append(k)
-				totals["{}".format(k)] = v*c
+
+	# Extraer totales
+	for d in data:
+		for k, v in d.fields.items():
+			if k in totals:
+				totals[k]+=v
+			else:
+				totals[k] = v
 
 	return render(request, BASE_DIR+'/home/templates/csv_upload_confirm.html', context={'columns': columns, 'data': data, 'totals': totals, 'filtr': filtr, 'name': name})
 
