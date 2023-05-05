@@ -16,6 +16,7 @@ Including another URLconf
 
 from django.urls import path, include
 from django.contrib import admin
+from django.conf.urls import handler404
 
 urlpatterns = [
     path('', include('home.urls')),
@@ -24,3 +25,5 @@ urlpatterns = [
     path('datos/', include('datos.urls')),
     path('to-mri/', include('to_mri.urls')),
 ]
+
+handler404 = 'home.views.handler_404'

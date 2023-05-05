@@ -4,12 +4,12 @@ from . import views
 
 urlpatterns = [
     path('', views.home, name='home'),
-    path('descargar_csv/', views.descargar_csv, name='descargar_csv'),
-    path('subir_archivo/', views.subir_archivo, name='subir_archivo'),
-    path('subir_archivo/confirmar/', views.subir_archivo_confirmar, name='subir_archivo_confirmar'),
-    path('subir_archivo/confirmar/cc/<str:bldgid>', views.subir_archivo_confirmar_cc, name='subir_archivo_confirmar_cc'), # guardar cambios 
-    path('subir_archivo/confirmar/dc/<str:bldgid>', views.subir_archivo_confirmar_dc, name='subir_archivo_confirmar_dc'), # deshacer cambios
-    path('validar_datos/', views.validar_datos, name='validar_datos'),
-    path('validar_datos/confirmar/<int:id>', views.validar_datos_confirmar, name='validar_datos_confirmar'),
-    path('postear_datos/', views.postear_datos, name='postear_datos')
+    path('csv_download/', views.csv_download, name='csv_download'),
+    path('csv_upload/', views.csv_upload, name='csv_upload'),
+    path('csv_upload/confirm/', views.csv_upload_confirm, name='csv_upload_confirm'),
+    path('csv_upload/confirm/cc/<str:bldgid>', views.csv_upload_confirm_cc, name='csv_upload_confirm_cc'), # guardar cambios 
+    path('csv_upload/confirm/dc/<str:bldgid>', views.csv_upload_confirm_dc, name='csv_upload_confirm_dc'), # deshacer cambios
+    path('data_validate/', views.data_validate, name='data_validate'),
+    path('data_validate/confirm/<int:id>', views.data_validate_confirm, name='data_validate_confirm'),
+    path('data_post/', views.data_post, name='data_post')
 ]

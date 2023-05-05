@@ -34,7 +34,7 @@ class Template(models.Model):
 class TemplateLog(models.Model):
 	username = models.CharField(max_length=30, default="Null")
 	bldgid = models.CharField(max_length=10)
-	batch = models.CharField(max_length=8, primary_key=True)
+	batch = models.CharField(max_length=8, default="Null")
 	invoice_date = models.DateField(default=date.today)
 	created = models.DateTimeField(default=timezone.now)
 
@@ -53,7 +53,7 @@ class TemplateLog(models.Model):
 
 
 class TemplateMonthlyCfg(models.Model):
-	rate = models.DecimalField(max_digits=5, decimal_places=2)
+	rate = models.DecimalField(max_digits=9, decimal_places=6)
 	date = models.DateField()
 
 	def __str__(self):

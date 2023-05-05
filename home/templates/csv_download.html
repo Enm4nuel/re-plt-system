@@ -1,0 +1,72 @@
+{% extends "index.html" %}
+{% load static %}
+
+{% block csschild %} <link type="text/css" rel="stylesheet" href="{% static 'css/csv_download.css' %}" /> {% endblock%}
+
+{% block title %} <title> Descargar Plantilla </title> {% endblock %}
+
+{% block titlepage %} Descargar Plantilla {% endblock %}
+
+{% block content %}
+
+	<div class="col-6 m-5 p-3 container bg-light">
+
+		<form action="/csv_download/" method="post" enctype="multipart/form-data">
+			{% csrf_token %}
+		    <legend class="p-2"> Parametros de plantilla </legend>
+
+		    <div class="row g-3 p-2">
+
+			    <div class="col-auto my-2 mx-3">
+			      	<label for="edificio" class="form-label">Edificio</label>
+			      	<select id="edificio" name="edificio" class="form-select">
+			      		<option selected> Selecciona el edificio... </option>
+			      			{% for edificio in edificios %}
+			      				<option value="{{edificio}}"> {{edificio}} </option>
+			      			{% endfor %}
+			      	</select>
+			      	<div id="valid-edificio">
+			    	</div>
+			    </div>
+
+			    <div class="col-auto my-2 mx-3">
+					<label for="moneda" class="form-label">Moneda</label>
+					<select id="moneda" name="moneda" class="form-select" disabled>
+						<option selected> Selecciona la moneda... </option>
+							{% for moneda in monedas %}
+								<option value="{{moneda}}"> {{moneda}} </option>
+							{% endfor %}
+					</select>
+					<div id="valid-moneda">
+					</div>
+			    </div>
+
+			</div>
+
+			<div class="row g-3 p-2">
+
+			    <div class="col-auto my-2 mx-3">
+					<label for="batch" class="form-label">Id de Batch</label>
+					<input id="batch" name="batch" type="number" maxlength="8" class="form-control" placeholder="Numero de batch" disabled>
+					<div id="valid-batch" class="row">
+					</div>
+			    </div>
+
+			    <div class="col-auto my-2 mx-3">
+					<label for="rate" class="form-label">Taza</label>
+					<input id="rate" name="rate" type="text" class="form-control" placeholder="Escribe la Taza..." disabled>
+					<div id="valid-rate" class="row">
+					</div>
+			    </div>
+
+			</div>
+
+		    <input type="submit" id="btn_gen_plt" class="btn btn-outline-success my-3 p-2 mx-2" disabled value="Generar plantilla" />
+
+		</form>
+
+{% endblock %}
+
+{% block scripts %}
+	<script src="../static/js/csv_download.js"></script>
+{% endblock %}

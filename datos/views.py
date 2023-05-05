@@ -37,8 +37,17 @@ def visualizar_data(request, filename, workbook):
 
 def deleteData(bldgid):
 	# Eliminar data previamente subida a la db
-	TemplateData.objects.filter(bldgid=bldgid).delete()
-	print("listo")
+	try:
+		TemplateData.objects.filter(bldgid__contains=bldgid).delete()
+	except:
+		print("paso algo malo")
+
+def deleteDataLog(bldgid):
+	# Eliminar data previamente subida a la db
+	try:
+		TemplateDataLog.objects.filter(bldgid__contains=bldgid).delete()
+	except:
+		print("paso algo malo")
 
 
 def getRate():
@@ -52,6 +61,16 @@ def uploadDataToDb(request, workbook):
 	
 	# Accedo a los datos de la hoja activa o en uso del archivo excel
 	sheet = workbook.active
+
+	# Evaluar si la plantilla es correcta
+
+
+	# Verificar si existe la data y eliminar en caso de que si
+	for row in sheet.iter_rows(min_row=2):
+		if TemplateData.objects.filter(bldgid__contains=row[2].value):
+			TemplateData.objects.filter(bldgid=row[2].value).delete()
+			print("listo")
+		break
 
 	# Extraer las columnas que conforman el archivo de plantilla que se esta subiendo
 	columns = []
@@ -72,12 +91,21 @@ def uploadDataToDb(request, workbook):
 	for row in sheet.iter_rows(min_row=2):
 		data = {}
 		for c in range(limit+1,len(columns)):
-			data[str(columns[c])] = str(row[c].value * rate)
-		templateData(1, row[1].value, row[2].value, row[3].value, row[4].value, data)
-		print("Se han agregado los datos nuevos a ", row[2].value)
-		filtr = row[2].value
+			data[str(columns[c])] = float(row[c].value)
+		# Evaluar si la informacion que se esta suministrando es correcta
+		if Template.objects.filter(bldgid__contains=row[2].value).exists():
+			templateData(1, row[1].value, row[2].value, row[3].value, row[4].value, data)
+			print("Se han agregado los datos nuevos a ", row[2].value)
+			filtr = row[2].value
+		else:
+			print("La informacion suministrada no es correcta")
+			return False
+	
+	if filtr !="":
+		templateDataUploadLog(1, request.user.username, filtr)
+		deleteDataLog(filtr)
 
-	templateDataUploadLog(1, request.user.username, filtr)
+	return True
 
 
 def templateData(option, d1, d2, d3, d4, d5):
@@ -123,5 +151,5 @@ def templateDataUploadLog(option, d1, d2):
 		d.save()
 
 	elif option == 2:
-		d = TemplateDataUploadLog.objects.filter(username=d1).delete()
+		TemplateDataUploadLog.objects.filter(username=d1).delete()
 

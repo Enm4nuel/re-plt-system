@@ -1,0 +1,28 @@
+{% extends "index.html" %}
+{% load static %}
+
+{% block csschild %} <link type="text/css" rel="stylesheet" href="{% static 'css/csv_upload.css' %}" /> {% endblock%}
+
+{% block title %} <title> Subir Plantilla </title> {% endblock %}
+
+{% block titlepage %} Subir Plantilla {% endblock %}
+
+{% block notification %} {% endblock %}
+
+{% block content %}
+
+	<div id="div_prin" class="col-4 m-5 p-3 container bg-light">
+
+		<form id="formCA" action="/csv_upload/" method="post" enctype="multipart/form-data">
+			{% csrf_token %}
+			<div class="row p-2 mt-5">
+				<input type="file" id="file" accept=".xlsx, .csv" name="file" />
+			</div>
+			<div class="row p-2">
+				<input type="submit" class="btn btn-primary" /> 
+			</div>
+		</form>
+
+	</div>
+
+{% endblock %}

@@ -1,17 +1,3 @@
-body {
-	--background-image: url('../img/bg-body.jpg');
-	--background-color: rgb(33, 37, 41);
-}
-
-footer{
-  line-height:50px;
-  left:0;  position: absolute;
-  bottom: 0;
-  width: 100%;
-  height: 50px;
-  text-align: center;
-}
-
 #div_prin {
 	background-color: #F5F5DC;
   color: blue;
