@@ -49,7 +49,6 @@ def csv_download(request):
 				coin = request.POST.get('moneda')
 				batch = request.POST.get('batch')
 				rate = request.POST.get('rate')
-				print("bien ok")
 
 				loadData(building, coin, batch, rate, request.user.username)
 

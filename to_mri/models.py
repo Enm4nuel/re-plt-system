@@ -17,7 +17,7 @@ class ToMri(models.Model):
 	rtaxgrpid = models.CharField(max_length=6) # se extrae de una vista X
 	department = models.CharField(default="@", max_length=30) # por default lleva @
 	currcode = models.CharField(max_length=3) # Moneda en la que se esta facturando
-	bcurcode = models.CharField(max_length=3) # moneda base 
+	bcurcode = models.CharField(max_length=3, default="DOP") # moneda base 
 
 	def __str__(self):
 		template = '{0.bldgid} {0.leasid} {0.descrptn} {0.tranamt}'

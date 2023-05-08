@@ -6,7 +6,7 @@ import numpy as np
 from openpyxl import Workbook
 from openpyxl.styles import Font, Color
 
-from .models import Template, TemplateLog, TemplateMonthlyCfgLog, TemplateMonthlyCfg
+from .models import Template, TemplateLog
 
 import pyodbc
 
@@ -46,19 +46,19 @@ def loadData(building, coin, batch, rate, user):
 			if i.bldgid == building and i.currcode == coin:
 				descripciones.append(v)
 
-	generar_plantilla(user, batch, coin, building, descripciones, leasid, bldgid, suitid, occpname)
+	generar_plantilla(user, batch, rate, coin, building, descripciones, leasid, bldgid, suitid, occpname)
 	cursor.close()
 
 	return 0
 
-def generar_plantilla(username, batch, coin, building, index = [], leasid = [], bldgid = [], suitid = [], occpname = []):
+def generar_plantilla(username, batch, rate, coin, building, index = [], leasid = [], bldgid = [], suitid = [], occpname = []):
 	d = {'LEASID': leasid, 'BLDGID': bldgid, 'SUITID': suitid, 'OCCPNAME': occpname}
 	for i in range(len(index)):
 		d[str(index[i])] = ""
 	df = pd.DataFrame(data=d)
 	df.to_excel("Plantilla" + building + "_" + coin + ".xlsx")
 
-	TemplateLog.objects.create(username=username, bldgid=building, batch=batch)
+	TemplateLog.objects.create(username=username, bldgid=building, batch=batch, rate=rate)
 
 
 def prueba_generar_plantilla(moneda, edificio, index = [], leasid = [], bldgid = [], suitid = [], occpname = []):
@@ -96,50 +96,3 @@ def prueba_generar_plantilla(moneda, edificio, index = [], leasid = [], bldgid =
 	#ws['1'].font = Font(bold=True)
 
 	wb.save("Plantilla" + edificio + "_" + moneda + ".xlsx")
-
-
-
-
-"""
-def modificar_plantillas(request):
-
-	if request.method == 'POST':
-
-		if 'descrptn_input' in request.POST:
-			try:
-				
-				bldgid = str(request.POST.get('bldgid_select'))
-				currcode = str(request.POST.get('currcode_select'))
-				inccat = str(request.POST.get('inccat_input'))
-				descrptn = str(request.POST.get('descrptn_input'))
-
-
-				p = Plantilla(bldgid=bldgid, currcode=currcode, inccat=inccat, descrptn=descrptn)
-				p.save()
-
-				print("El campo nuevo se ha guardado correctamente!!")
-
-			except NameError:
-				print("No se pudo guardar el campo nuevo!", NameError)
-
-	else:
-		print("No se ha generado ningun POST")
-
-
-	data = Plantilla.objects.all()
-
-	return render(request, 'C:/Users/Leonor Fischer/Documents/re-sys-main/plantillas/templates/modificar_plantillas.html', context={'data': data})
-
-def modificar_plantillas_eliminar(request, id):
-	
-	p = Plantilla.objects.get(id=id)
-	p.delete()
-
-	return redirect('/plantillas/modificar_plantillas')
-
-def modificar_plantillas_editar(request, id):
-
-	if request.method == 'POST':
-		pass
-
-	return redirect('/plantillas/modificar_plantillas')"""

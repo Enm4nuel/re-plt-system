@@ -49,14 +49,6 @@ def deleteDataLog(bldgid):
 	except:
 		print("paso algo malo")
 
-
-def getRate():
-
-	ap = TemplateMonthlyCfg.objects.order_by('-date')[:1]
-	print(ap)
-	return ap[0].rate
-
-
 def uploadDataToDb(request, workbook):
 	
 	# Accedo a los datos de la hoja activa o en uso del archivo excel
