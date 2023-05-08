@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'plantillas',
     'datos',
+    'to_mri',
     'urlparams'
 ]
 
@@ -67,7 +68,8 @@ TEMPLATES = [
         'DIRS': [
             'C:/Users/Leonor Fischer/Documents/re-sys-main/home/templates/',
             'C:/Users/Leonor Fischer/Documents/re-sys-main/plantillas/templates/',
-            'C:/Users/Leonor Fischer/Documents/re-sys-main/datos/templates/'
+            'C:/Users/Leonor Fischer/Documents/re-sys-main/datos/templates/',
+            'C:/Users/Leonor Fischer/Documents/re-sys-main/to_mri/templates/'
             ],
         'APP_DIRS': True,
         'OPTIONS': {

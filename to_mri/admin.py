@@ -5,6 +5,5 @@ from .models import ToMri
 
 @admin.register(ToMri)
 class ToMriAdmin(admin.ModelAdmin):
-	list_display = ('BLDGID', 'LEASID', 'DESCRPTN', 'VALUE')
-	ordering = ('BLDGID',)
-	search_fields = ('BLDGID', 'LEASID', 'DESCRPTN')
+	list_display = ('bldgid', 'leasid', 'descrptn', 'tranamt')
+	

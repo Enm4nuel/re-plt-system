@@ -11,7 +11,7 @@
 
 	<div class="col-6 m-5 p-3 container bg-light">
 
-		<form class="row g-3 p-2 needs-validation" novalidate>
+		<form class="row g-3 p-2 needs-validation" novalidate method="post" enctype="multipart/form-data">
 			{% csrf_token %}
 
 		    <legend class="p-2"> Parametros de plantilla </legend>
@@ -53,7 +53,7 @@
 		    <!-- batch -->
 		    <div class="col-auto my-2 mx-3">
 				<label for="batch" class="form-label">Id de Batch</label>
-				<input id="batch" name="batch" type="number" maxlength="8" class="form-control" required>
+				<input id="batch" name="batch" type="text" maxlength="8" class="form-control" required>
 				<div class="valid-feedback">
 		    		<i class='bi bi-check-lg text-success h-5'> </i>
 			    </div>

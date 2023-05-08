@@ -49,6 +49,7 @@ def csv_download(request):
 				coin = request.POST.get('moneda')
 				batch = request.POST.get('batch')
 				rate = request.POST.get('rate')
+				print("bien ok")
 
 				loadData(building, coin, batch, rate, request.user.username)
 
@@ -139,7 +140,7 @@ def csv_upload_confirm(request):
 	for d in data:
 		for k, v in d.fields.items():
 			if k in totals:
-				totals[k]+=v
+				totals[k]+= v
 			else:
 				totals[k] = v
 
