@@ -56,7 +56,11 @@
 						<td> {{d.suitid}} </td>
 						<td> {{d.occpname}} </td>
 						{% for k,v in d.fields.items %}
-							<td> {{v}} </td>
+							{% if v == 0 %}
+								<td> - </td>
+							{% else %}
+								<td> {{v}} </td>
+							{% endif %}
 						{% endfor %}
 					</tr>
 				{% endfor %}

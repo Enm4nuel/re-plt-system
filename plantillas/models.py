@@ -10,9 +10,10 @@ from django.dispatch import receiver
 class Template(models.Model):
 	bldgid = models.CharField(max_length=10)
 	currcode = models.CharField(max_length=10)
-	fields = models.JSONField(null=True)
-	#inccat = models.CharField(max_length=10)
-	#descrptn = models.CharField(max_length=30)
+	#fields = models.JSONField(null=True)
+	inccat = models.CharField(max_length=10, default="NULL")
+	descrptn = models.CharField(max_length=50, default="NULL")
+	descrptn_name = models.CharField(max_length=25, default="NULL")
 
 	def getIncome(self, bldgid, currcode):
 		if self.bldgid == bldgid and self.currcode == currcode:

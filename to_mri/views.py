@@ -9,72 +9,71 @@ from plantillas.models import *
 
 from .models import *
 
-# Create your views here.
-
-server = '172.24.1.39'
-database = 'FACTURA'
-username = 'Data_Editor'
-password = 'jr03124300'
+from db.db_manage import *
 
 def formatear_data(request):
 
-	cnxn = pyodbc.connect('DRIVER={ODBC Driver 18 for SQL Server};SERVER='+server+';DATABASE='+database+';ENCRYPT=no;UID='+username+';PWD='+ password)
-	cursor = cnxn.cursor()
-	cursor.execute("SELECT * FROM VINCH")
-	row = cursor.fetchall()
+	dm = DbManage()
+	row = dm.connect2()
 
-	for i in range(len(row)):
-		print(row[i])
-
-	return HttpResponse("formatear_data")
-"""
-	td = TemplateData.objects.all()
-	t = Template.object.all()
-	tl = TemplateLog.objects.order_by('-date')[:1]
+	template_data = TemplateData.objects.all()
+	template = Template.objects.all()
+	template_log = TemplateLog.objects.order_by('-created')[:1]
 
 	# no cambian
-	cmbatch = tl.batch
-	trandate = tl.invoice_date # para arreglar
+	cmbatch = template_log[0].batch
+	trandate = template_log[0].invoice_date # para arreglar
+	rate = template_log[0].rate
 
-	item = 0
-
+	item = 1
 
 	# Guardar datos en tabla "tomri_data"
-	for d in data:
-		for i in t:
+	for td in template_data:
+		for t in template:
 			inccat = ""
-			for k, v in d.fields.items():
-				for k2, v2 in i.fields.items():
-					if k == v2:
-						inccat = k2
-			tm = ToMri(
-				cmbatch = cmbatch,
-				item = item,
-				bldgid = d.bldgid,
-				leasid = d.leasid,
-				trandate = trandate,
-				inccat = inccat,
-				# srccode = CH
-				descrptn = "",
-				tranamt = "",
-				# taxitem = N
-				rtaxgrpid = "",
-				# department = @
-				currcode = ""
-				# bcurcode = DOP 
-			)
-			tm.save()
-			###
-			item += 1
+			currcode = ""
+			rtax = ""
+			tranamt = 0.0
+			descrptn = ""
+			for k, v in td.fields.items():
+				if k == t.descrptn_name:
+					inccat = t.inccat
+					currcode = t.currcode
+					if v != 0:
+						tranamt = ( (float(v)) / (float(rate)) )
+					descrptn = t.descrptn
+			for r in row:
+				if r[0] == inccat:
+					rtax = r[1]
+			if tranamt != 0 and tranamt != 0.0:
+				tm = ToMri(
+					cmbatch = cmbatch,
+					item = item,
+					bldgid = td.bldgid,
+					leasid = td.leasid,
+					trandate = trandate,
+					inccat = inccat,
+					# srccode = CH
+					descrptn = descrptn,
+					tranamt = tranamt,
+					# taxitem = N
+					rtaxgrpid = rtax,
+					# department = @
+					currcode = currcode
+					# bcurcode = DOP 
+				)
+				tm.save()
+				###
+				item += 1
+			else:
+				pass
 
 
+	data = ToMri.objects.all()
 	# Visualizar datos por edificio
 	for d in data:
-		for k,v in d.fields.items():
-			if v is not None and v > 0 and v != "" and v != "0" and v != "0.0" and v != "0.00":
-				print("------------------------------------------")
-				print("-", d.bldgid, "|", d.leasid, ", Llave: ", k, "|", "Valor: ", v)
-				print("------------------------------------------")
+		print("------------------------------------------")
+		print("-", d.bldgid, "|", d.leasid, ", Description: ", d.descrptn, "|", "Valor: ", d.tranamt)
+		print("------------------------------------------")
 
 	return HttpResponse("formatear_data")
-	"""

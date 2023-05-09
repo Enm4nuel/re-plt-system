@@ -127,7 +127,6 @@ def csv_upload_confirm(request):
 	totals = {}
 
 	c = len(data)
-	rate = getRate()
 
 	# Extraer columnas
 	for d in data:
@@ -139,7 +138,7 @@ def csv_upload_confirm(request):
 	for d in data:
 		for k, v in d.fields.items():
 			if k in totals:
-				totals[k]+= v
+				totals[k] += v
 			else:
 				totals[k] = v
 

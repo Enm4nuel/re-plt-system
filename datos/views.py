@@ -77,14 +77,16 @@ def uploadDataToDb(request, workbook):
 	filtr = ""
 
 	# Obtener taza definida para la facturacion de dicho mes
-	rate = getRate()
+	#rate = getRate()
 
 	# Agregando los datos extraidos a la tabla
 	for row in sheet.iter_rows(min_row=2):
 		data = {}
 		for c in range(limit+1,len(columns)):
-			if (float(row[c].value) != 0):
-				data[str(columns[c])] = float(row[c].value)
+			if row[c].value != 0 and row[c].value is not None:
+				data[str(columns[c])] = row[c].value
+			else:
+				data[str(columns[c])] = 0
 		# Evaluar si la informacion que se esta suministrando es correcta
 		if Template.objects.filter(bldgid__contains=row[2].value).exists():
 			if data:
