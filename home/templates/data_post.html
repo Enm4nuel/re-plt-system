@@ -69,9 +69,10 @@
             </div>
             <hr class="m-2">
                 <div class="m-2 flex-end align-items-end">
-                    <a class="btn btn-success col-12">
-                        Postear
-                    </a>
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="submit" class="btn btn-success col-12" value="Postear" />
+                    </form>
                 </div>
             </hr>
         </div>

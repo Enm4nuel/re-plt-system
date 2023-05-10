@@ -23,10 +23,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '7qk21&4apcnvj1b07p8@3*16^41no^afzfaq(dd_x^#_#6073='
 
 # SECURITY WARNING: don't run with debug turned on in production!
+#DEBUG = False
 DEBUG = True
 
 SESSION_COOKIE_AGE = 12000
 
+#ALLOWED_HOSTS = ["*"]
 ALLOWED_HOSTS = []
 
 # Al loguearse , redirige al usuario a la pagina de home

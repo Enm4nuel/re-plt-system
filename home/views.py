@@ -19,6 +19,8 @@ from plantillas.views import *
 from datos.views import *
 from datos.models import *
 
+from to_mri.views import *
+
 def su_test(user):
 	return user.is_superuser
 
@@ -190,6 +192,9 @@ def data_validate_confirm(request, id):
 @login_required(login_url='/admin/')
 @user_passes_test(su_test)
 def data_post(request):
+
+	if request.method == 'POST':
+		export_excel(request)
 	
 	data = TemplateDataLog.objects.all().order_by('created').values()
 
