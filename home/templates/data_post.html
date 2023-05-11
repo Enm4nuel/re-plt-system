@@ -17,64 +17,68 @@
 <div class="container row m-2 p-2">
     <hr class="m-2">
         <div class="col-8">
-            <div class="p-2">
-                <div class="table-responsive">
-                    <table class="table mb-0 rounded">
-                        <thead class="thead-info">
-                            <tr>
-                                <th>
-                                    {{""}}
-                                </th>
-                                <th>
-                                    Validacion #1
-                                </th>
-                                <th>
-                                    Validacion #2
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for d in data %}
-                            <tr>
-                                <td>
-                                    {{d.bldgid}}
-                                </td>
-                                {% if d.first_validation == True %}
-                                <td>
-                                    <i class="bi bi-check-circle-fill text-success">
-                                    </i>
-                                </td>
-                                {% else %}
-                                <td>
-                                    <i class="bi bi-x-circle-fill text-danger">
-                                    </i>
-                                </td>
-                                {% endif %}
-									{% if d.second_validation == True %}
-                                <td>
-                                    <i class="bi bi-check-circle-fill text-success">
-                                    </i>
-                                </td>
-                                {% else %}
-                                <td>
-                                    <i class="bi bi-x-circle-fill text-danger">
-                                    </i>
-                                </td>
-                                {% endif %}
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+            <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+                <div class="p-2">
+                    <div class="table-responsive">
+                        <table class="table mb-0 rounded">
+                            <thead class="thead-info">
+                                <tr>
+                                    <th>
+                                        {{""}}
+                                    </th>
+                                    <th>
+                                        Validacion #1
+                                    </th>
+                                    <th>
+                                        Validacion #2
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for d in data %}
+                                <tr>
+                                    <td>
+                                        <input name="bldgid" type="radio" value="{{d.bldgid}}">{{" "}}
+                                        {{d.bldgid}}
+                                    </td>
+                                    {% if d.first_validation == True %}
+                                    <td>
+                                        <i class="bi bi-check-circle-fill text-success">
+                                        </i>
+                                    </td>
+                                    {% else %}
+                                    <td>
+                                        <i class="bi bi-x-circle-fill text-danger">
+                                        </i>
+                                    </td>
+                                    {% endif %}
+    									{% if d.second_validation == True %}
+                                    <td>
+                                        <i class="bi bi-check-circle-fill text-success">
+                                        </i>
+                                    </td>
+                                    {% else %}
+                                    <td>
+                                        <i class="bi bi-x-circle-fill text-danger">
+                                        </i>
+                                    </td>
+                                    {% endif %}
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-            </div>
-            <hr class="m-2">
-                <div class="m-2 flex-end align-items-end">
-                    <form method="post" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        <input type="submit" class="btn btn-success col-12" value="Postear" />
-                    </form>
-                </div>
-            </hr>
+                <hr class="m-2">
+                    <div class="m-2 flex-end align-items-end">
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <input type="submit" class="btn btn-success col-12" value="Postear" />
+                        </form>
+                    </div>
+                </hr>
+            </form>
         </div>
         <div class="col-4">
             {% for d in data %}
@@ -99,8 +103,26 @@
             </div>
             {% endfor %}
         </div>
-        <hr class="m-2">
-        </hr>
+        <hr class="m-2"> </hr>
     </hr>
 </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        function confirmar_cambios(filtro){
+            var confirmar = confirm('Estas a punto de confirmar los cambios realizados...\nEstas seguro de esto?');
+            if (confirmar == true)
+            {
+                location.href = "cc/"+filtro;
+            }
+        }
+        function deshacer_cambios(filtro){
+            var confirmar = confirm('Deseas deshacer los cambios?');
+            if (confirmar == true)
+            {
+                location.href = "/csv_upload/confirm/dc/"+filtro;
+            }
+        }
+    </script>
 {% endblock %}

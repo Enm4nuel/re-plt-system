@@ -194,7 +194,12 @@ def data_validate_confirm(request, id):
 def data_post(request):
 
 	if request.method == 'POST':
-		export_excel(request)
+		if 'bldgid' in request.POST:
+			bldgid = request.POST.get('bldgid')
+			print(bldgid)
+			export_excel(request, bldgid)
+		else:
+			print("No se marco ninguna opcion...")
 	
 	data = TemplateDataLog.objects.all().order_by('created').values()
 

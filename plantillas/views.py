@@ -46,7 +46,7 @@ def generar_plantilla(username, batch, rate, coin, building, index = [], leasid 
 	for i in range(len(index)):
 		d[str(index[i])] = ""
 	df = pd.DataFrame(data=d)
-	df.to_excel("Plantilla" + building + "_" + coin + ".xlsx")
+	df.to_excel("Plantilla_" + building + "_" + coin + "_" + batch + ".xlsx")
 
 	TemplateLog.objects.create(username=username, bldgid=building, batch=batch, rate=rate)
 

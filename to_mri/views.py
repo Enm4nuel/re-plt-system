@@ -18,7 +18,7 @@ from openpyxl.utils.dataframe import dataframe_to_rows
 from openpyxl.styles import Font
 
 
-def formatear_data(request):
+def formatear_data(request, bldgid):
     dm = DbManage()
     row = dm.connect2()
 
@@ -99,8 +99,11 @@ def formatear_data(request):
     return HttpResponse("formatear_data")
 
 
-def export_excel(request):
+def export_excel(request, bldgid):
+    formatear_data(request, bldgid)
     generar_consolidado()
+    # Eliminamos la data de 'template_data' luego de haberla exportado
+    TemplateData.objects.all().delete()
     # Eliminamos la data de 'tomri_data' luego de haberla exportado
     #ToMri.objects.all().delete()
 
