@@ -101,23 +101,72 @@ def formatear_data(request):
 
 def export_excel(request):
     generar_consolidado()
+    # Eliminamos la data de 'tomri_data' luego de haberla exportado
+    #ToMri.objects.all().delete()
 
     return redirect("/data_post/")
 
 
 def generar_consolidado():
+
+    # variable que almacena los edificios
+    buildings = []
+
+    # Extraer edificios
+    for tm in ToMri.objects.values_list('bldgid', flat=True):
+        if tm not in buildings:
+            buildings.append(tm)
+
+    # Extraer data de la tabla 'tomri_data' y convertirla a DataFrame
     data = ToMri.objects.all()
     df = pd.DataFrame(list(data.values()))
 
-    # Escribir el DataFrame en el archivo de Excel
-    workbook = Workbook()
-    worksheet = workbook.active
+    # Para almacenar y convertir a mayusculas, la fila que contiene el nombre de las columnas
+    columns = []
 
+    # Obtener columnas en mayusculas
     for row in dataframe_to_rows(df, index=False, header=True):
-        worksheet.append(row)
+        for r in row:
+            columns.append(str(r.upper()))
+        break
 
+    # Para separar la primera linea o fila de las demas
+    i = 0
+
+    # Rellenar el excel con la data extraida
+    for b in buildings:
+        # Declarar el libro de trabajo y la hoja actual (o activa)
+        workbook = Workbook()
+        worksheet = workbook.active
+        # ------------------------------------------------------ #
+        # Algoritmo de crear excel
+        for row in dataframe_to_rows(df, index=False, header=True):
+            if i == 0:
+                worksheet.append(columns)
+                i = 1
+            else:  # Aqui sigue llenando el excel con normalidad
+                if b == row[2]:
+                    worksheet.append(row)
+        # ------------------------------------------------------ #
+        # Guardamos el excel
+        workbook.save("Consolidado_"+b+".xlsx")
+        i = 0
+
+"""
+    # Rellenar el excel con la data extraida
+    for row in dataframe_to_rows(df, index=False, header=True):
+        if i == 1:
+            columns = []  # Para almacenar y convertir a mayusculas, la fila que contiene el nombre de las columnas
+            for r in row:
+                columns.append(r.upper())
+            worksheet.append(columns)
+            i+=1
+        else:  # Aqui sigue llenando el excel con normalidad
+            worksheet.append(row)
+
+    # Guardamos el excel
     workbook.save("my_table.xlsx")
-    #ToMri.objects.all().delete()
+"""
 
 
 """
