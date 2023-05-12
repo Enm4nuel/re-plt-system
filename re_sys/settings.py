@@ -57,7 +57,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware'
 ]
 
 ROOT_URLCONF = 're_sys.urls'
@@ -90,7 +90,6 @@ WSGI_APPLICATION = 're_sys.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
-#DATABASE_ROUTERS = ['plantillas.routers.PlantillaRouter']
 
 DATABASES = {
     'default': {
@@ -98,18 +97,6 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
-
-"""
-'plantilla_db': {
-        'NAME': 'FACTURA',
-        'ENGINE': 'mssql',
-        'USER': 'Data_Editor',
-        'PASSWORD': 'jr03124300',
-        'HOST': '172.24.1.39',
-        'PORT': '1433',
-        'OPTIONS': {'driver': 'ODBC Driver 17 for SQL Server',}
-    },
-"""
 
 
 # Password validation
@@ -138,8 +125,6 @@ LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
 
-#DATE_INPUT_FORMATS = ['%m-%d-%Y']
-
 USE_I18N = True
 
 USE_L10N = True
@@ -156,4 +141,4 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'home/static'),
     os.path.join(BASE_DIR, 'plantillas/static'),
     os.path.join(BASE_DIR, 'datos/static')
-    )
+)

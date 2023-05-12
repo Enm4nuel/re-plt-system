@@ -25,5 +25,3 @@ urlpatterns = [
     path('datos/', include('datos.urls')),
     path('to-mri/', include('to_mri.urls')),
 ]
-
-handler404 = 'home.views.handler_404'
