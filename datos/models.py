@@ -1,7 +1,8 @@
 from django.db import models
 from django.db.models import Sum
 from django.utils import timezone
-from datetime import date
+import datetime
+now = datetime.datetime.now()
 from django.contrib.auth.models import User
 
 from django.db.models.signals import post_save
@@ -15,6 +16,9 @@ class TemplateData(models.Model):
 	suitid = models.CharField(max_length=10)
 	occpname = models.CharField(max_length=50)
 	fields = models.JSONField(null=True)
+	cmbatch = models.CharField(max_length=10, default="NULL")
+	rate = models.DecimalField(max_digits=9, decimal_places=6, default=1)
+	currcode = models.CharField(max_length=3, default="NULL")
 
 	def getbuildingsList(self):
 		data = TemplateData.objects.all()

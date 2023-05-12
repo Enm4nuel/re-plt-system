@@ -88,7 +88,7 @@ def csv_upload(request):
 
 			file = request.FILES['file']
 			workbook = load_workbook(file)
-			rtn = uploadDataToDb(request, workbook)
+			rtn = uploadDataToDb(request, workbook, file.name)
 
 			if rtn == False:
 				print("Se produjo un error")
@@ -193,17 +193,26 @@ def data_validate_confirm(request, id):
 @user_passes_test(su_test)
 def data_post(request):
 
+	#---
+	data = TemplateDataLog.objects.all().order_by('created')
+
 	if request.method == 'POST':
 		if 'bldgid' in request.POST:
+			# obtener el valor de la var
 			bldgid = request.POST.get('bldgid')
-			print(bldgid)
-			export_excel(request, bldgid)
+			# Iteramos en la data y validamos que todo este bien
+			for d in data:
+				if d.bldgid == bldgid:
+					if d.first_validation == True and d.second_validation == True:
+						export_excel(request, bldgid)
+					else:
+						messages.error(request, "Debes validar los datos antes de postear!")
+						#return redirect("/data_post/")
 		else:
 			print("No se marco ninguna opcion...")
-	
-	data = TemplateDataLog.objects.all().order_by('created').values()
+			messages.warning(request, "Debes seleccionar que datos deseas exportar!")
 
-	return render(request, BASE_DIR+'/home/templates/data_post.html', context={'data': data})
+	return render(request, BASE_DIR+'/home/templates/data_post.html', context={'data': data, 'message': messages})
 
 
 

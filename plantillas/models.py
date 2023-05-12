@@ -1,11 +1,13 @@
 from django.db import models
 from django.utils import timezone
-from datetime import date
+from datetime import datetime
 
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 # Create your models here.
+
+fecha = datetime.now()
 
 class Template(models.Model):
 	bldgid = models.CharField(max_length=10)
@@ -36,7 +38,7 @@ class TemplateLog(models.Model):
 	bldgid = models.CharField(max_length=10)
 	batch = models.CharField(max_length=8, default="Null")
 	rate = models.DecimalField(max_digits=9, decimal_places=6, default=1)
-	invoice_date = models.DateField(default=date.today)
+	invoice_date = models.DateField(default=timezone.now)
 	created = models.DateTimeField(default=timezone.now)
 
 	def getLastBatch(self):

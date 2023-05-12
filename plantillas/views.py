@@ -32,7 +32,6 @@ def loadData(building, coin, batch, rate, user):
 		occpname.append(row[i][3])
 
 	t = Template.objects.all()
-	print(t)
 	for i in t:
 		if i.bldgid == building and i.currcode == coin:
 			descripciones.append(i.descrptn_name)
@@ -46,7 +45,7 @@ def generar_plantilla(username, batch, rate, coin, building, index = [], leasid 
 	for i in range(len(index)):
 		d[str(index[i])] = ""
 	df = pd.DataFrame(data=d)
-	df.to_excel("Plantilla_" + building + "_" + coin + "_" + batch + ".xlsx")
+	df.to_excel("Plantilla_" + building + "_" + coin + "_" + batch + "_" + ".xlsx")
 
 	TemplateLog.objects.create(username=username, bldgid=building, batch=batch, rate=rate)
 

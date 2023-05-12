@@ -49,13 +49,15 @@ def deleteDataLog(bldgid):
 	except:
 		print("paso algo malo")
 
-def uploadDataToDb(request, workbook):
+def uploadDataToDb(request, workbook, filename):
 	
 	# Accedo a los datos de la hoja activa o en uso del archivo excel
 	sheet = workbook.active
 
-	# Evaluar si la plantilla es correcta
+	# 
 
+	filname = filename.split("_")
+	print(filname)
 
 	# Verificar si existe la data y eliminar en caso de que si
 	for row in sheet.iter_rows(min_row=2):
@@ -90,7 +92,7 @@ def uploadDataToDb(request, workbook):
 		# Evaluar si la informacion que se esta suministrando es correcta
 		if Template.objects.filter(bldgid__contains=row[2].value).exists():
 			if data:
-				templateData(1, row[1].value, row[2].value, row[3].value, row[4].value, data)
+				templateData(1, row[1].value, row[2].value, row[3].value, row[4].value, data, filname[3])
 				print("Se han agregado los datos nuevos a ", row[2].value)
 				filtr = row[2].value
 		else:
@@ -100,15 +102,14 @@ def uploadDataToDb(request, workbook):
 	if filtr !="":
 		templateDataUploadLog(1, request.user.username, filtr)
 		deleteDataLog(filtr)
-
 	return True
 
 
-def templateData(option, d1, d2, d3, d4, d5):
+def templateData(option, d1, d2, d3, d4, d5, d6):
 	
 	# Para agregar datos a la tabla "template_data"
 	if option == 1:
-		d = TemplateData(leasid=d1, bldgid=d2, suitid=d3, occpname=d4, fields=d5)
+		d = TemplateData(leasid=d1, bldgid=d2, suitid=d3, occpname=d4, fields=d5, cmbatch=d6)
 		d.save()
 
 

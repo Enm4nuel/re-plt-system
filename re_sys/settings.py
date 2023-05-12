@@ -23,13 +23,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '7qk21&4apcnvj1b07p8@3*16^41no^afzfaq(dd_x^#_#6073='
 
 # SECURITY WARNING: don't run with debug turned on in production!
-#DEBUG = False
-DEBUG = True
+DEBUG = False
+#DEBUG = True
 
 SESSION_COOKIE_AGE = 12000
 
-#ALLOWED_HOSTS = ["*"]
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
+#ALLOWED_HOSTS = []
 
 # Al loguearse , redirige al usuario a la pagina de home
 LOGIN_REDIRECT_URL = '/'
@@ -134,9 +134,11 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
-LANGUAGE_CODE = 'es-es'
+LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
+
+#DATE_INPUT_FORMATS = ['%m-%d-%Y']
 
 USE_I18N = True
 
