@@ -143,7 +143,6 @@ def csv_upload_confirm_cc(request, bldgid):
 	response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
 	return response
 
-
 def csv_upload_confirm_dc(request, bldgid):
 
 	deleteData(bldgid)

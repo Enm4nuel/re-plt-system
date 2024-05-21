@@ -60,9 +60,16 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
+<<<<<<< HEAD
+            'C:/Users/Leonor Fischer/Documents/re-sys-main/home/templates/',
+            'C:/Users/Leonor Fischer/Documents/re-sys-main/plantillas/templates/',
+            'C:/Users/Leonor Fischer/Documents/re-sys-main/datos/templates/'
+            ],
+=======
             os.path.join(BASE_DIR, 'home/templates'),
             os.path.join(BASE_DIR, 'plantillas/static')
         ],
+>>>>>>> master
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
