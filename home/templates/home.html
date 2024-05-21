@@ -1,0 +1,65 @@
+{% extends "index.html" %}
+{% load static %}
+
+{% block csschild %}
+<link href="{% static 'css/home.css' %}" rel="stylesheet" type="text/css"/>
+{% endblock%}
+
+{% block title %}
+<title>
+    Sistema de Plantillas
+</title>
+{% endblock %}
+
+{% block titlepage %} Sistema de Plantillas {% endblock %}
+
+{% block notification %}
+
+	{% for message in messages %}
+        {% if message.tags == 'error' %}
+            <div class="alert alert-danger alert-dismissible m-2" id="msg" role="alert">
+                <i class="bi bi-x-circle-fill"></i> {{message}}
+                <button aria-label="Close" class="btn-close" data-bs-dismiss="alert" type="button">
+                </button>
+            </div>
+        {% else %}
+            <div class="alert alert-{{message.tags}} alert-dismissible m-2" id="msg" role="alert">
+                {{message}}
+                <button aria-label="Close" class="btn-close" data-bs-dismiss="alert" type="button">
+                </button>
+            </div>
+        {% endif %}
+    {% endfor %}
+
+{% endblock %}
+
+{% block content %}
+
+<div class="col-4 m-5 p-3 container bg-light" id="div_prin">
+    <div class="p-2">
+        <form action="{% url 'csv_download' %}" enctype="multipart/form-data" id="formDP" method="post">
+            {% csrf_token %}
+            <input class="btn btn-outline-primary p-2 col-12" name="btn1" type="submit" value="Descargar Plantilla"/>
+        </form>
+    </div>
+    <div class="p-2">
+        <form action="{% url 'csv_upload' %}" enctype="multipart/form-data" id="formSA" method="post">
+            {% csrf_token %}
+            <input class="btn btn-outline-primary p-2 col-12" name="btn2" type="submit" value="Subir Plantilla"/>
+        </form>
+    </div>
+    <div class="p-2">
+        <form action="{% url 'data_validate' %}" enctype="multipart/form-data" id="formV" method="post">
+            {% csrf_token %}
+            <input class="btn btn-outline-primary p-2 col-12" name="btn3" type="submit" value="Validar Datos"/>
+        </form>
+    </div>
+    <div class="p-2">
+        <form action="{% url 'data_post' %}" enctype="multipart/form-data" id="formP" method="post">
+            {% csrf_token %}
+            <input class="btn btn-outline-primary p-2 col-12" name="btn4" type="submit" value="Postear Datos"/>
+        </form>
+    </div>
+</div>
+	
+{% endblock %}

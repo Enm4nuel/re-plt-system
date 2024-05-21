@@ -1,0 +1,87 @@
+{% extends "index.html" %}
+{% load static %}
+
+{% block csschild %} <link type="text/css" rel="stylesheet" href="{% static 'css/csv_upload_confirm.css' %}" /> {% endblock%}
+
+{% block title %} <title> Validar Datos </title> {% endblock %}
+
+{% block titlepage %} Validar Datos {% endblock %}
+
+{% block contenTable %}
+	<div class="accordion m-2" id="accordionExample">
+		{% for filtro in filtros %}
+
+			<div class="accordion-item">
+
+				<h2 class="accordion-header" id="heading{{filtro.bldgid}}">
+					<button 
+						class="accordion-button" 
+						type="button" 
+						data-bs-toggle="collapse" 
+						data-bs-target="#collapse{{filtro.bldgid}}" 
+						aria-expanded="false" 
+						aria-controls="collapse{{filtro.bldgid}}"
+					>
+					{{filtro.bldgid}}
+					</button>
+				</h2>
+
+				<div 
+					id="collapse{{filtro.bldgid}}" 
+					class="accordion-collapse collapse" 
+					aria-labelledby="heading{{filtro.bldgid}}" 
+					data-bs-parent="#accordionExample"
+				>
+					<div class="accordion-body">
+						{% if filtro.second_validation == False %}
+							<a class="btn btn-success col-2 m-1" href="javascript:confirmar({{filtro.id}})"> 
+								<i class="bi bi-check2-circle"></i> 
+								Validar 
+							</a>
+						{% else %}
+							<a class="btn btn-danger col-2 m-1" href="javascript:confirmar({{filtro.id}})"> 
+								<i class="bi bi-x-circle"></i> 
+								Cancelar validacion 
+							</a>
+						{% endif %}
+						<div class="table-responsive">
+						    <table class="table table-striped caption-top">
+								<tbody>
+									{% for i in data %}
+										{% if filtro.bldgid == i.bldgid %}
+											<tr>	
+												<td> {{i.leasid}} </td>
+												<td> {{i.bldgid}} </td>
+												<td> {{i.suitid}} </td>
+												<td> {{i.occpname}} </td>
+												{% for k,v in i.fields.items %}
+													<td> {{v}} </td>
+												{% endfor %}
+											</tr>
+										{% endif %}
+									{% endfor %}
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+
+			</div>
+
+		{% endfor %}
+	</div>
+{% endblock %}
+
+
+{% block scripts %}
+	<script>
+		function confirmar(b)
+		{
+			var confirmar = confirm('Estas a punto de confirmar los cambios realizados?');
+	        if (confirmar == true)
+	        {
+	        	location.href ="/data_validate/confirm/"+b;
+	        }
+		}
+	</script>
+{% endblock %}

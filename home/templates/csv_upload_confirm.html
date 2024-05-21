@@ -1,0 +1,98 @@
+{% extends "index.html" %}
+{% load static %}
+
+{% block csschild %} <link type="text/css" rel="stylesheet" href="{% static 'css/csv_upload_confirm.css' %}" /> {% endblock%}
+
+{% block title %} <title> Confirmar Cambios </title> {% endblock %}
+
+{% block titlepage %} Confirmar Cambios {% endblock %}
+
+{% block notification %}
+
+	{% for message in messages %}
+		<div class="alert alert-{{message.tags}} alert-dismissible m-2" id="msg" role="alert">
+			{% if message.tags == 'warning' %}
+				<i class="bi bi-exclamation-triangle-fill" style="font-size: 1.5em;"></i>
+			{% elif message.tags == 'success' %}
+				<i class="bi bi-check-circle-fill" style="font-size: 1.5em;"></i>
+			{% endif %}
+			{{message}}
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+		</div>
+	{% endfor %}
+
+{% endblock %}
+
+{% block contenTable %}
+	
+	<div class="p-2 mt-2 ml-2">
+		<row>
+			<a id="botonActualizar" href="javascript:confirmar_cambios('{{filtr}}')" data-bs-toggle="tooltip" data-bs-placement="top" title="Guardar cambios" type="button" class="btn btn-success col-2" value="Guardar Cambios"> 
+				<i class="bi bi-file-earmark-arrow-up"></i>
+				 Guardar Cambios
+			</a>
+			<a id="botonBorrar" href="javascript:deshacer_cambios('{{filtr}}')" data-bs-toggle="tooltip" data-bs-placement="top" title="Borrar todo" type="button" class="btn btn-danger col-2">
+				<i class="bi bi-trash"></i>
+				 Deshacer
+			</a>
+		</row>
+	</div>
+
+	<div class="m-3 mb-5 h-2 table-responsive">
+		<table class="table table-striped caption-top">
+			<caption> {{ name }} </caption>
+			<thead class="table-light">
+				<tr>
+					{% for c in columns %}
+						<th> {{c}} </th>
+					{% endfor %}
+				</tr>
+			</thead>
+			<tbody>
+				{% for d in data %}
+					<tr>	
+						<td> {{d.leasid}} </td>
+						<td> {{d.bldgid}} </td>
+						<td> {{d.suitid}} </td>
+						<td> {{d.occpname}} </td>
+						{% for k,v in d.fields.items %}
+							<td> {{v}} </td>
+						{% endfor %}
+					</tr>
+				{% endfor %}
+			</tbody>
+			<tfoot>
+				<tr>
+					<td> - </td>
+					<td> - </td>
+					<td> - </td>
+					<td> - </td>
+					{% for k, v in totals.items %}
+						<th> {{v}} </th>
+					{% endfor %}
+				</tr>
+			</tfoot>
+		</table>
+	</div>
+	
+{% endblock %}
+
+{% block scripts %}
+	<script>
+      	function confirmar_cambios(filtro){
+	        var confirmar = confirm('Estas a punto de confirmar los cambios realizados...\nEstas seguro de esto?');
+	        if (confirmar == true)
+	        {
+	        	location.href = "cc/"+filtro;
+	        }
+      	}
+      	function deshacer_cambios(filtro){
+      		var confirmar = confirm('Deseas deshacer los cambios?');
+      		if (confirmar == true)
+      		{
+      			location.href = "/csv_upload/confirm/dc/"+filtro;
+      		}
+      	}
+    </script>
+{% endblock %}
+	

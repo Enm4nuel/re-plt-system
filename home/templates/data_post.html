@@ -1,0 +1,105 @@
+{% extends "index.html" %}
+{% load static %}
+
+{% block csschild %}
+<link href="{% static 'css/csv_upload_confirm.css' %}" rel="stylesheet" type="text/css"/>
+{% endblock%}
+
+{% block title %}
+<title>
+    Postear Datos
+</title>
+{% endblock %}
+
+{% block titlepage %} Postear Datos {% endblock %}
+
+{% block contenTable %}
+<div class="container row m-2 p-2">
+    <hr class="m-2">
+        <div class="col-8">
+            <div class="p-2">
+                <div class="table-responsive">
+                    <table class="table mb-0 rounded">
+                        <thead class="thead-info">
+                            <tr>
+                                <th>
+                                    {{""}}
+                                </th>
+                                <th>
+                                    Validacion #1
+                                </th>
+                                <th>
+                                    Validacion #2
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for d in data %}
+                            <tr>
+                                <td>
+                                    {{d.bldgid}}
+                                </td>
+                                {% if d.first_validation == True %}
+                                <td>
+                                    <i class="bi bi-check-circle-fill text-success">
+                                    </i>
+                                </td>
+                                {% else %}
+                                <td>
+                                    <i class="bi bi-x-circle-fill text-danger">
+                                    </i>
+                                </td>
+                                {% endif %}
+									{% if d.second_validation == True %}
+                                <td>
+                                    <i class="bi bi-check-circle-fill text-success">
+                                    </i>
+                                </td>
+                                {% else %}
+                                <td>
+                                    <i class="bi bi-x-circle-fill text-danger">
+                                    </i>
+                                </td>
+                                {% endif %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <hr class="m-2">
+                <div class="m-2 flex-end align-items-end">
+                    <a class="btn btn-success col-12">
+                        Postear
+                    </a>
+                </div>
+            </hr>
+        </div>
+        <div class="col-4">
+            {% for d in data %}
+            <div class="card mb-3" style="max-width: 540px;">
+                <div class="row g-0">
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                {{d.username}}
+                            </h5>
+                            <p class="card-text">
+                                {{d.bldgid}}
+                            </p>
+                            <p class="card-text">
+                                <small class="text-muted">
+                                    {{d.created}}
+                                </small>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <hr class="m-2">
+        </hr>
+    </hr>
+</div>
+{% endblock %}
