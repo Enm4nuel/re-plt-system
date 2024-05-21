@@ -35,7 +35,10 @@
 
 {% block content %}
 
+<<<<<<< HEAD
 	{% if user.is_superuser %}
+=======
+>>>>>>> master
 <div class="col-4 m-5 p-3 container bg-light" id="div_prin">
     <div class="p-2">
         <form action="{% url 'csv_download' %}" enctype="multipart/form-data" id="formDP" method="post">
@@ -62,6 +65,7 @@
         </form>
     </div>
 </div>
+<<<<<<< HEAD
 {% else %}
 <div class="col-auto m-5 p-3 container bg-light" id="div_prin">
     <div class="p-2">
@@ -78,5 +82,7 @@
     </div>
 </div>
 {% endif %}
+=======
+>>>>>>> master
 	
 {% endblock %}
