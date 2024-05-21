@@ -35,10 +35,6 @@
 
 {% block content %}
 
-<<<<<<< HEAD
-	{% if user.is_superuser %}
-=======
->>>>>>> master
 <div class="col-4 m-5 p-3 container bg-light" id="div_prin">
     <div class="p-2">
         <form action="{% url 'csv_download' %}" enctype="multipart/form-data" id="formDP" method="post">
@@ -65,24 +61,5 @@
         </form>
     </div>
 </div>
-<<<<<<< HEAD
-{% else %}
-<div class="col-auto m-5 p-3 container bg-light" id="div_prin">
-    <div class="p-2">
-        <form action="{% url 'csv_download' %}" enctype="multipart/form-data" id="formDP" method="post">
-            {% csrf_token %}
-            <input class="btn btn-outline-primary p-2 col-12" name="btn1" type="submit" value="Descargar Plantilla"/>
-        </form>
-    </div>
-    <div class="p-2">
-        <form action="{% url 'csv_upload' %}" enctype="multipart/form-data" id="formSA" method="post">
-            {% csrf_token %}
-            <input class="btn btn-outline-primary p-2 col-12" name="btn2" type="submit" value="Subir Plantilla"/>
-        </form>
-    </div>
-</div>
-{% endif %}
-=======
->>>>>>> master
 	
 {% endblock %}
